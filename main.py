@@ -1,5 +1,5 @@
 import pygame
-from levels import Level1, Level2, Level3, Level4, Level5
+from levels import Level1, Level2, Level3, Level4, Level5, Level6
 
 
 def main():
@@ -7,7 +7,7 @@ def main():
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Persimon's investigation")
 
-    levels = [Level1(), Level2(), Level3(), Level4(), Level5()]
+    levels = [Level1(), Level2(), Level3(), Level4(), Level5(), Level6]
     current_level_index = 0
 
     running = True
