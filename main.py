@@ -1,0 +1,35 @@
+import pygame
+from levels.level1 import Level1
+from levels.level2 import Level2
+from levels.level3 import Level3
+from levels.level4 import Level4
+from levels.level5 import Level5
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((800, 600))
+    pygame.display.set_caption("Persimon's investigation")
+
+    levels = [Level1(), Level2(), Level3(), Level4(), Level5()]
+    current_level_index = 0
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        current_level = levels[current_level_index]
+        current_level.run(screen)
+
+        if current_level.is_completed():
+            current_level_index += 1
+            if current_level_index >= len(levels):
+                running = False
+
+        pygame.display.flip()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
