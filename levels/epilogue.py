@@ -1,14 +1,14 @@
 import pygame
 
 
-class Level4:
+class Epilogue:
     def __init__(self):
         self.completed = False
 
     def run(self, screen):
-        screen.fill((50, 50, 50))
+        screen.fill((0, 0, 0))
         font = pygame.font.Font(None, 36)
-        text = font.render("Level 4", True, (255, 255, 255))
+        text = font.render("Эпилог", True, (255, 255, 255))
         screen.blit(text, (200, 250))
 
     def handle_event(self, event):
