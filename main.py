@@ -19,8 +19,8 @@ class MainMenu:
         self.selected = 0
         self.options = ["Начать игру", "Настройки", "Выход"]
         self.button_rects = []
-        self.title_surface = self.font.render("Persimona's Investigation", True, (255, 255, 255))
-        self.title_shadow_surface = self.font.render("Persimona's Investigation", True, (100, 100, 100))
+        self.title_surface = self.font.render("Persimmona's Investigation", True, (255, 255, 255))
+        self.title_shadow_surface = self.font.render("Persimmona's Investigation", True, (100, 100, 100))
 
     def run(self, screen):
         clock = pygame.time.Clock()
@@ -248,7 +248,7 @@ def main():
     info = pygame.display.Info()
     current_resolution = [info.current_w, info.current_h]
     screen = pygame.display.set_mode(current_resolution, pygame.FULLSCREEN)
-    pygame.display.set_caption("Persimona's Investigation")
+    pygame.display.set_caption("Persimmona's Investigation")
     clock = pygame.time.Clock()
 
     running = True
@@ -276,8 +276,10 @@ def main():
                 break
             continue
 
-        levels = [Prologue(), Level1(current_resolution[0], current_resolution[1]), Level2(), Level3(), Level4(),
-                  Level5(), Level6(), Epilogue()]
+        levels = [Prologue(current_resolution[0], current_resolution[1]), Level1(current_resolution[0], current_resolution[1]),
+                  Level2(), Level3(),
+                  Level4(), Level5(),
+                  Level6(), Epilogue()]
         current_level_index = 0
 
         while current_level_index < len(levels):

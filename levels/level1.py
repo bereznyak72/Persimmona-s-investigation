@@ -33,7 +33,7 @@ class Level1:
         )
         self.start_text_animation(self.intro_text)
         self.text_area_height = 150
-        self.character_image = pygame.image.load("assets/images/persimonna.png").convert_alpha()
+        self.character_image = pygame.image.load("assets/images/persimmona.png").convert_alpha()
         reference_width, reference_height = 1920, 1080
         target_character_width, target_character_height = 316, 606
         width_scale = self.screen_width / reference_width
