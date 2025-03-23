@@ -5,6 +5,7 @@ class Level1:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.font = pygame.font.SysFont("Arial", int(self.screen_height * 0.035), bold=False)
+        self.list_font = pygame.font.SysFont("Arial", int(self.screen_height * 0.03), bold=True)
         self.completed = False
         self.current_scene = "intro"
         self.scenes = {
@@ -56,15 +57,17 @@ class Level1:
         self.bathroom_order = 1
         self.bathroom_dialogue = "Утро начинается как обычно… Сначала нужно взять зубную щётку…"
         self.kitchen_items = {
-            "flour": {"rect": pygame.Rect(200, 50, 50, 50), "clicked": False, "order": 1},
-            "eggs": {"rect": pygame.Rect(260, 50, 50, 50), "clicked": False, "order": 2},
-            "milk": {"rect": pygame.Rect(320, 50, 50, 50), "clicked": False, "order": 3},
-            "salt": {"rect": pygame.Rect(380, 50, 50, 50), "clicked": False, "order": 4},
-            "sugar": {"rect": pygame.Rect(440, 50, 50, 50), "clicked": False, "order": 5},
-            "bacon": {"rect": pygame.Rect(500, 50, 50, 50), "clicked": False, "order": 6}
+            "flour": {"rect": pygame.Rect(200, 50, 50, 50), "clicked": False, "order": 1, "strike_progress": 0},
+            "eggs": {"rect": pygame.Rect(260, 50, 50, 50), "clicked": False, "order": 2, "strike_progress": 0},
+            "milk": {"rect": pygame.Rect(320, 50, 50, 50), "clicked": False, "order": 3, "strike_progress": 0},
+            "salt": {"rect": pygame.Rect(380, 50, 50, 50), "clicked": False, "order": 4, "strike_progress": 0},
+            "sugar": {"rect": pygame.Rect(440, 50, 50, 50), "clicked": False, "order": 5, "strike_progress": 0},
+            "bacon": {"rect": pygame.Rect(500, 50, 50, 50), "clicked": False, "order": 6, "strike_progress": 0}
         }
         self.kitchen_order = 1
         self.kitchen_dialogue = "Сначала нужна мука…"
+        self.kitchen_ingredients_list = ["Мука", "Яйца", "Молоко", "Соль", "Сахар", "Бекон"]
+        self.strike_animation_speed = 5
         self.bedroom_items = {
             "coat": {"rect": pygame.Rect(200, 50, 50, 50), "clicked": False},
             "hat": {"rect": pygame.Rect(260, 50, 50, 50), "clicked": False},
@@ -89,6 +92,13 @@ class Level1:
             self.current_text = self.full_text[:self.char_index + 1]
             self.char_index += 1
             self.last_char_time = current_time
+
+    def update_strike_animation(self):
+        for item, data in self.kitchen_items.items():
+            if data["clicked"] and data["strike_progress"] < 100:
+                data["strike_progress"] += self.strike_animation_speed
+                if data["strike_progress"] > 100:
+                    data["strike_progress"] = 100
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.current_text == self.full_text:
@@ -145,6 +155,7 @@ class Level1:
     def run(self, screen):
         current_time = pygame.time.get_ticks()
         self.update_text_animation(current_time)
+        self.update_strike_animation()
         screen.fill((20, 20, 20))
         self.scenes[self.current_scene](screen)
         if self.current_scene not in ("intro", "outro"):
@@ -217,7 +228,7 @@ class Level1:
         dialogues = {
             "coat": "Нужен плащ детектива… без него никуда.",
             "hat": "Возьму шляпу… классика.",
-            "sniffer": "Возьму нюхач… пригодится для улик.",
+            "sniff": "Возьму нюхач… пригодится для улик.",
             "notebook": "Возьму блокнот и ручку… каждая деталь важна.",
             "magnifier": "Возьму увеличительное стекло… чтобы ничего не упустить.",
             "wallet": "Возьму кошелёк и ключи… и телефон, конечно.",
@@ -241,6 +252,29 @@ class Level1:
         if not self.scene_finished:
             for item, data in self.kitchen_items.items():
                 pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
+
+            list_x = self.screen_width - 220
+            list_y = 10
+            list_width = 200
+            list_height = len(self.kitchen_ingredients_list) * 40 + 20
+            pygame.draw.rect(screen, (255, 255, 255), (list_x, list_y, list_width, list_height))
+
+            for i, ingredient in enumerate(self.kitchen_ingredients_list):
+                text_surface = self.list_font.render(ingredient, True, (0, 0, 0))
+                text_rect = text_surface.get_rect(topleft=(list_x + 10, list_y + 10 + i * 40))
+                screen.blit(text_surface, text_rect)
+
+                item_key = list(self.kitchen_items.keys())[i]
+                if self.kitchen_items[item_key]["clicked"]:
+                    strike_progress = self.kitchen_items[item_key]["strike_progress"]
+                    start_pos = (list_x + 10, list_y + 10 + i * 40 + text_surface.get_height() // 2)
+                    end_pos_max = (list_x + 10 + text_surface.get_width(), list_y + 10 + i * 40 + text_surface.get_height() // 2)
+                    end_pos = (
+                        start_pos[0] + (end_pos_max[0] - start_pos[0]) * strike_progress / 100,
+                        end_pos_max[1]
+                    )
+                    pygame.draw.line(screen, (255, 0, 0), start_pos, end_pos, 3)
+
         self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20)
 
     def bedroom_scene(self, screen):
