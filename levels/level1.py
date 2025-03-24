@@ -1,4 +1,6 @@
 import pygame
+from utils.constants import *
+from utils.helpers import *
 
 class Level1:
     def __init__(self, screen_width, screen_height):
@@ -16,7 +18,7 @@ class Level1:
             "outro": self.outro_scene
         }
         self.scene_finished = False
-        self.text_animation_speed = 15
+        self.text_animation_speed = TEXT_ANIMATION_SPEED
         self.last_char_time = 0
         self.current_text = ""
         self.full_text = ""
@@ -32,21 +34,20 @@ class Level1:
             "в плаще, шляпе и с сумкой, покидает дом.",
             "Персимонна отправляется в контору"
         )
-        self.start_text_animation(self.intro_text)
-        self.text_area_height = 150
-        self.character_image = pygame.image.load("assets/images/persimmona.png").convert_alpha()
-        reference_width, reference_height = 1920, 1080
-        target_character_width, target_character_height = 316, 606
-        width_scale = self.screen_width / reference_width
-        height_scale = self.screen_height / reference_height
+        start_text_animation(self, self.intro_text)
+        self.text_area_height = TEXT_AREA_HEIGHT
+        self.character_image = pygame.image.load(ASSETS["PERSIMMONA"]).convert_alpha()
+        
+        width_scale = self.screen_width / REFERENCE_WIDTH
+        height_scale = self.screen_height / REFERENCE_HEIGHT
         scale_factor = min(width_scale, height_scale)
-        new_width = int(target_character_width * scale_factor)
-        new_height = int(target_character_height * scale_factor)
-        new_width = max(new_width, 50)
-        new_height = max(new_height, 96)
+        target_width, target_height = CHARACTER_SIZES["persimmona"]
+        new_width = max(int(target_width * scale_factor), MIN_CHAR_WIDTH)
+        new_height = max(int(target_height * scale_factor), MIN_CHAR_HEIGHT)
         self.character_image = pygame.transform.scale(self.character_image, (new_width, new_height))
         self.character_rect = pygame.Rect(self.screen_width - new_width, self.screen_height - new_height, new_width, new_height)
         self.text_max_width = self.screen_width - new_width - 60
+        
         self.bathroom_items = {
             "toothbrush": {"rect": pygame.Rect(200, 50, 50, 50), "clicked": False, "order": 1},
             "toothpaste": {"rect": pygame.Rect(260, 50, 50, 50), "clicked": False, "order": 2},
@@ -80,19 +81,6 @@ class Level1:
         self.bedroom_dialogue = "Возьми плащ детектива… без него никуда."
         self.safe_puzzle_solved = False
 
-    def start_text_animation(self, text):
-        self.text_lines = text if isinstance(text, (list, tuple)) else [text]
-        self.full_text = " ".join(self.text_lines)
-        self.current_text = ""
-        self.char_index = 0
-        self.last_char_time = pygame.time.get_ticks()
-
-    def update_text_animation(self, current_time):
-        if current_time - self.last_char_time >= self.text_animation_speed and self.char_index < len(self.full_text):
-            self.current_text = self.full_text[:self.char_index + 1]
-            self.char_index += 1
-            self.last_char_time = current_time
-
     def update_strike_animation(self):
         for item, data in self.kitchen_items.items():
             if data["clicked"] and data["strike_progress"] < 100:
@@ -105,22 +93,22 @@ class Level1:
             pos = event.pos
             if self.current_scene == "intro":
                 self.current_scene = "bathroom"
-                self.start_text_animation(self.bathroom_dialogue)
+                start_text_animation(self, self.bathroom_dialogue)
             elif self.current_scene == "outro":
                 self.completed = True
             elif self.scene_finished:
                 if self.current_scene == "bathroom":
                     self.current_scene = "kitchen"
                     self.scene_finished = False
-                    self.start_text_animation(self.kitchen_dialogue)
+                    start_text_animation(self, self.kitchen_dialogue)
                 elif self.current_scene == "kitchen":
                     self.current_scene = "bedroom"
                     self.scene_finished = False
-                    self.start_text_animation(self.bedroom_dialogue)
+                    start_text_animation(self, self.bedroom_dialogue)
                 elif self.current_scene == "bedroom":
                     self.current_scene = "outro"
                     self.scene_finished = False
-                    self.start_text_animation(self.outro_text)
+                    start_text_animation(self, self.outro_text)
             elif self.current_scene == "bathroom":
                 for item, data in self.bathroom_items.items():
                     if data["rect"].collidepoint(pos) and not data["clicked"]:
@@ -130,7 +118,7 @@ class Level1:
                             self.update_bathroom_dialogue()
                         else:
                             self.bathroom_dialogue = "Нет, не сейчас…"
-                            self.start_text_animation(self.bathroom_dialogue)
+                            start_text_animation(self, self.bathroom_dialogue)
                         break
             elif self.current_scene == "kitchen":
                 for item, data in self.kitchen_items.items():
@@ -141,7 +129,7 @@ class Level1:
                             self.update_kitchen_dialogue()
                         else:
                             self.kitchen_dialogue = "Нет, не сейчас…"
-                            self.start_text_animation(self.kitchen_dialogue)
+                            start_text_animation(self, self.kitchen_dialogue)
                         break
             elif self.current_scene == "bedroom":
                 for item, data in self.bedroom_items.items():
@@ -154,9 +142,9 @@ class Level1:
 
     def run(self, screen):
         current_time = pygame.time.get_ticks()
-        self.update_text_animation(current_time)
+        update_text_animation(self, current_time)
         self.update_strike_animation()
-        screen.fill((20, 20, 20))
+        screen.fill(COLORS["BLACK"])
         self.scenes[self.current_scene](screen)
         if self.current_scene not in ("intro", "outro"):
             screen.blit(self.character_image, self.character_rect)
@@ -164,38 +152,13 @@ class Level1:
     def is_completed(self):
         return self.completed
 
-    def render_text(self, screen, text, y_pos, center=False):
-        lines = self.wrap_text(text, self.text_max_width)
-        for i, line in enumerate(lines):
-            text_surface = self.font.render(line, True, (255, 255, 255))
-            if center:
-                text_rect = text_surface.get_rect(center=(self.screen_width // 2, y_pos + i * 40))
-            else:
-                text_rect = text_surface.get_rect(topleft=(50, y_pos + i * 40))
-            screen.blit(text_surface, text_rect)
-
-    def wrap_text(self, text, max_width):
-        words = text.split(" ")
-        lines = []
-        current_line = ""
-        for word in words:
-            test_line = current_line + word + " "
-            if self.font.size(test_line)[0] <= max_width:
-                current_line = test_line
-            else:
-                lines.append(current_line.strip())
-                current_line = word + " "
-        if current_line:
-            lines.append(current_line.strip())
-        return lines
-
     def intro_scene(self, screen):
-        pygame.draw.rect(screen, (255, 245, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
+        pygame.draw.rect(screen, COLORS["INTRO_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
 
     def outro_scene(self, screen):
-        pygame.draw.rect(screen, (100, 100, 150), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
+        pygame.draw.rect(screen, COLORS["OUTRO_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
 
     def update_bathroom_dialogue(self):
         dialogues = {
@@ -206,7 +169,7 @@ class Level1:
             5: "Надо вытереть лицо полотенцем…",
         }
         self.bathroom_dialogue = dialogues.get(self.bathroom_order, "Теперь можно и позавтракать!")
-        self.start_text_animation(self.bathroom_dialogue)
+        start_text_animation(self, self.bathroom_dialogue)
         if self.bathroom_order > 5:
             self.scene_finished = True
 
@@ -220,7 +183,7 @@ class Level1:
             6: "…и, конечно же, бекон!",
         }
         self.kitchen_dialogue = dialogues.get(self.kitchen_order, "Завтрак готов!")
-        self.start_text_animation(self.kitchen_dialogue)
+        start_text_animation(self, self.kitchen_dialogue)
         if self.kitchen_order > 6:
             self.scene_finished = True
 
@@ -234,33 +197,33 @@ class Level1:
             "wallet": "Возьму кошелёк и ключи… и телефон, конечно.",
         }
         self.bedroom_dialogue = dialogues.get(item, "Всё готово. Пора в контору.")
-        self.start_text_animation(self.bedroom_dialogue)
+        start_text_animation(self, self.bedroom_dialogue)
         if item == "safe" and all(data["clicked"] for data in self.bedroom_items.values()):
             self.scene_finished = True
         if item == "safe":
             self.safe_puzzle_solved = True
 
     def bathroom_scene(self, screen):
-        pygame.draw.rect(screen, (200, 200, 255), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BATHROOM_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.bathroom_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
 
     def kitchen_scene(self, screen):
-        pygame.draw.rect(screen, (255, 255, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["KITCHEN_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.kitchen_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
 
             list_x = self.screen_width - 220
             list_y = 10
             list_width = 200
             list_height = len(self.kitchen_ingredients_list) * 40 + 20
-            pygame.draw.rect(screen, (255, 255, 255), (list_x, list_y, list_width, list_height))
+            pygame.draw.rect(screen, COLORS["WHITE"], (list_x, list_y, list_width, list_height))
 
             for i, ingredient in enumerate(self.kitchen_ingredients_list):
-                text_surface = self.list_font.render(ingredient, True, (0, 0, 0))
+                text_surface = self.list_font.render(ingredient, True, COLORS["BLACK"])
                 text_rect = text_surface.get_rect(topleft=(list_x + 10, list_y + 10 + i * 40))
                 screen.blit(text_surface, text_rect)
 
@@ -273,13 +236,13 @@ class Level1:
                         start_pos[0] + (end_pos_max[0] - start_pos[0]) * strike_progress / 100,
                         end_pos_max[1]
                     )
-                    pygame.draw.line(screen, (255, 0, 0), start_pos, end_pos, 3)
+                    pygame.draw.line(screen, COLORS["RED"], start_pos, end_pos, 3)
 
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
 
     def bedroom_scene(self, screen):
-        pygame.draw.rect(screen, (200, 255, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BEDROOM_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.bedroom_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])

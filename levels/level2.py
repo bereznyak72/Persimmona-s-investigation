@@ -1,4 +1,6 @@
 import pygame
+from utils.constants import *
+from utils.helpers import *
 
 class Level2:
     def __init__(self, screen_width, screen_height):
@@ -15,7 +17,7 @@ class Level2:
             "outro": self.outro_scene
         }
         self.scene_finished = False
-        self.text_animation_speed = 15
+        self.text_animation_speed = TEXT_ANIMATION_SPEED
         self.last_char_time = 0
         self.current_text = ""
         self.full_text = ""
@@ -41,40 +43,31 @@ class Level2:
             "Буду ждать хороших новостей!",
         ]
         self.current_line_index = 0
-        self.start_text_animation(self.intro_text[self.current_line_index])
-        self.text_area_height = 150
+        start_text_animation(self, self.intro_text[self.current_line_index])
+        self.text_area_height = TEXT_AREA_HEIGHT
 
         self.characters = {
-            "persimmona": pygame.image.load("assets/images/persimmona.png").convert_alpha(),
-            "corn": pygame.image.load("assets/images/corn.png").convert_alpha(),
-            "blueberry": pygame.image.load("assets/images/blueberry.png").convert_alpha()
+            "persimmona": pygame.image.load(ASSETS["PERSIMMONA"]).convert_alpha(),
+            "corn": pygame.image.load(ASSETS["CORN"]).convert_alpha(),
+            "blueberry": pygame.image.load(ASSETS["BLUEBERRY"]).convert_alpha()
         }
         self.current_character = "persimmona"
 
-        reference_width, reference_height = 1920, 1080
-        target_sizes = {
-            "persimmona": (316, 606),
-            "corn": (304, 650),
-            "blueberry": (448, 544)
-        }
-
-        width_scale = self.screen_width / reference_width
-        height_scale = self.screen_height / reference_height
+        width_scale = self.screen_width / REFERENCE_WIDTH
+        height_scale = self.screen_height / REFERENCE_HEIGHT
         scale_factor = min(width_scale, height_scale)
 
         for char, image in self.characters.items():
-            target_width, target_height = target_sizes[char]
-            new_width = int(target_width * scale_factor)
-            new_height = int(target_height * scale_factor)
-            new_width = max(new_width, 50)
-            new_height = max(new_height, 96)
+            target_width, target_height = CHARACTER_SIZES[char]
+            new_width = max(int(target_width * scale_factor), MIN_CHAR_WIDTH)
+            new_height = max(int(target_height * scale_factor), MIN_CHAR_HEIGHT)
             self.characters[char] = pygame.transform.scale(image, (new_width, new_height))
             self.characters[char] = {
                 "image": self.characters[char],
                 "rect": pygame.Rect(self.screen_width - new_width, self.screen_height - new_height, new_width, new_height)
             }
 
-        max_char_width = max(target_sizes[char][0] * scale_factor for char in target_sizes)
+        max_char_width = max(CHARACTER_SIZES[char][0] * scale_factor for char in CHARACTER_SIZES)
         self.text_max_width = self.screen_width - int(max_char_width) - 60
 
         self.blueberry_items = {
@@ -102,33 +95,21 @@ class Level2:
         self.pineapple_dialogue = "Осколки стекла у подоконника… Надо проверить запах."
         self.pineapple_dialogue_state = "start"
 
-    def start_text_animation(self, text):
-        self.full_text = text
-        self.current_text = ""
-        self.char_index = 0
-        self.last_char_time = pygame.time.get_ticks()
-
-    def update_text_animation(self, current_time):
-        if current_time - self.last_char_time >= self.text_animation_speed and self.char_index < len(self.full_text):
-            self.current_text = self.full_text[:self.char_index + 1]
-            self.char_index += 1
-            self.last_char_time = current_time
-
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.current_text == self.full_text:
             pos = event.pos
             if self.current_scene == "intro":
                 self.current_line_index += 1
                 if self.current_line_index < len(self.intro_text):
-                    self.start_text_animation(self.intro_text[self.current_line_index])
+                    start_text_animation(self, self.intro_text[self.current_line_index])
                 else:
                     self.current_scene = "blueberry_room"
                     self.current_character = "persimmona"
-                    self.start_text_animation(self.blueberry_dialogue)
+                    start_text_animation(self, self.blueberry_dialogue)
             elif self.current_scene == "outro":
                 self.current_line_index += 1
                 if self.current_line_index < len(self.outro_text):
-                    self.start_text_animation(self.outro_text[self.current_line_index])
+                    start_text_animation(self, self.outro_text[self.current_line_index])
                 else:
                     self.completed = True
             elif self.scene_finished:
@@ -136,18 +117,18 @@ class Level2:
                     self.current_scene = "electrical_room"
                     self.scene_finished = False
                     self.current_character = "corn"
-                    self.start_text_animation(self.electrical_dialogue)
+                    start_text_animation(self, self.electrical_dialogue)
                 elif self.current_scene == "electrical_room" and self.door_unlocked:
                     self.current_scene = "pineapple_room"
                     self.scene_finished = False
                     self.current_character = "persimmona"
-                    self.start_text_animation(self.pineapple_dialogue)
+                    start_text_animation(self, self.pineapple_dialogue)
                 elif self.current_scene == "pineapple_room":
                     self.current_scene = "outro"
                     self.scene_finished = False
                     self.current_character = "persimmona"
                     self.current_line_index = 0
-                    self.start_text_animation(self.outro_text[self.current_line_index])
+                    start_text_animation(self, self.outro_text[self.current_line_index])
             elif self.current_scene == "blueberry_room":
                 for item, data in self.blueberry_items.items():
                     if data["rect"].collidepoint(pos) and not data["clicked"]:
@@ -174,8 +155,8 @@ class Level2:
 
     def run(self, screen):
         current_time = pygame.time.get_ticks()
-        self.update_text_animation(current_time)
-        screen.fill((20, 20, 20))
+        update_text_animation(self, current_time)
+        screen.fill(COLORS["BLACK"])
         self.scenes[self.current_scene](screen)
         
         if self.current_scene == "intro":
@@ -206,40 +187,13 @@ class Level2:
     def is_completed(self):
         return self.completed
 
-    def render_text(self, screen, text, y_pos, center=False):
-        lines = self.wrap_text(text, self.text_max_width)
-        for i, line in enumerate(lines):
-            text_surface = self.font.render(line, True, (255, 255, 255))
-            if center:
-                text_rect = text_surface.get_rect(center=(self.screen_width // 2, y_pos + i * 40))
-            else:
-                text_rect = text_surface.get_rect(topleft=(50, y_pos + i * 40))
-                if (self.current_scene != "intro" or self.current_line_index >= 2) and text_rect.right > self.characters[self.current_character]["rect"].left:
-                    text_rect.topleft = (50, y_pos + (i + 1) * 40)
-            screen.blit(text_surface, text_rect)
-
-    def wrap_text(self, text, max_width):
-        words = text.split(" ")
-        lines = []
-        current_line = ""
-        for word in words:
-            test_line = current_line + word + " "
-            if self.font.size(test_line)[0] <= max_width:
-                current_line = test_line
-            else:
-                lines.append(current_line.strip())
-                current_line = word + " "
-        if current_line:
-            lines.append(current_line.strip())
-        return lines
-
     def intro_scene(self, screen):
-        pygame.draw.rect(screen, (150, 100, 50), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
+        pygame.draw.rect(screen, COLORS["INTRO_L2_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
 
     def outro_scene(self, screen):
-        pygame.draw.rect(screen, (100, 150, 100), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
+        pygame.draw.rect(screen, COLORS["OUTRO_L2_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
 
     def update_blueberry_dialogue(self, item):
         if item == "footprints":
@@ -260,7 +214,7 @@ class Level2:
         else:
             self.blueberry_dialogue = "Сначала нужно осмотреть следы."
             self.blueberry_dialogue_state = "wrong"
-        self.start_text_animation(self.blueberry_dialogue)
+        start_text_animation(self, self.blueberry_dialogue)
 
     def update_electrical_dialogue(self, item):
         if self.electrical_items[item]["correct"]:
@@ -282,7 +236,7 @@ class Level2:
             elif self.electrical_dialogue_state == "wrong":
                 self.electrical_dialogue = "Ещё один не тот… Сколько их тут?"
                 self.lights_off = True
-        self.start_text_animation(self.electrical_dialogue)
+        start_text_animation(self, self.electrical_dialogue)
 
     def update_pineapple_dialogue(self, item):
         if item == "glass_shards":
@@ -303,28 +257,26 @@ class Level2:
         else:
             self.pineapple_dialogue = "Сначала надо осмотреть осколки."
             self.pineapple_dialogue_state = "wrong"
-        self.start_text_animation(self.pineapple_dialogue)
+        start_text_animation(self, self.pineapple_dialogue)
 
     def blueberry_room_scene(self, screen):
-        pygame.draw.rect(screen, (150, 200, 255), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.blueberry_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
 
     def electrical_room_scene(self, screen):
-        if self.lights_off:
-            pygame.draw.rect(screen, (50, 50, 50), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        else:
-            pygame.draw.rect(screen, (200, 200, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        bg_color = COLORS["ELECTRICAL_OFF"] if self.lights_off else COLORS["ELECTRICAL_ON"]
+        pygame.draw.rect(screen, bg_color, (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.electrical_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
 
     def pineapple_room_scene(self, screen):
-        pygame.draw.rect(screen, (255, 200, 150), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["PINEAPPLE_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.pineapple_items.items():
-                pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
+                pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
