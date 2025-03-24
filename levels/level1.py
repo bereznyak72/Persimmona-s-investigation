@@ -191,11 +191,11 @@ class Level1:
 
     def intro_scene(self, screen):
         pygame.draw.rect(screen, (255, 245, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20, center=True)
+        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
 
     def outro_scene(self, screen):
         pygame.draw.rect(screen, (100, 100, 150), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20, center=True)
+        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50, center=True)
 
     def update_bathroom_dialogue(self):
         dialogues = {
@@ -245,7 +245,7 @@ class Level1:
         if not self.scene_finished:
             for item, data in self.bathroom_items.items():
                 pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20)
+        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
 
     def kitchen_scene(self, screen):
         pygame.draw.rect(screen, (255, 255, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
@@ -275,11 +275,11 @@ class Level1:
                     )
                     pygame.draw.line(screen, (255, 0, 0), start_pos, end_pos, 3)
 
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20)
+        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
 
     def bedroom_scene(self, screen):
         pygame.draw.rect(screen, (200, 255, 200), (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         if not self.scene_finished:
             for item, data in self.bedroom_items.items():
                 pygame.draw.rect(screen, (0, 255, 0) if not data["clicked"] else (100, 100, 100), data["rect"])
-        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 20)
+        self.render_text(screen, self.current_text, self.screen_height - self.text_area_height + 50)
