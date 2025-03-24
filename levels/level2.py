@@ -50,19 +50,32 @@ class Level2:
             "blueberry": pygame.image.load("assets/images/blueberry.png").convert_alpha()
         }
         self.current_character = "persimmona"
+
         reference_width, reference_height = 1920, 1080
-        target_character_width, target_character_height = 316, 606
+        target_sizes = {
+            "persimmona": (316, 606),
+            "corn": (304, 650),
+            "blueberry": (448, 544)
+        }
+
         width_scale = self.screen_width / reference_width
         height_scale = self.screen_height / reference_height
         scale_factor = min(width_scale, height_scale)
-        self.char_width = int(target_character_width * scale_factor)
-        self.char_height = int(target_character_height * scale_factor)
-        self.char_width = max(self.char_width, 50)
-        self.char_height = max(self.char_height, 96)
-        for char in self.characters:
-            self.characters[char] = pygame.transform.scale(self.characters[char], (self.char_width, self.char_height))
-        self.character_rect = pygame.Rect(self.screen_width - self.char_width, self.screen_height - self.char_height, self.char_width, self.char_height)
-        self.text_max_width = self.screen_width - self.char_width - 60
+
+        for char, image in self.characters.items():
+            target_width, target_height = target_sizes[char]
+            new_width = int(target_width * scale_factor)
+            new_height = int(target_height * scale_factor)
+            new_width = max(new_width, 50)
+            new_height = max(new_height, 96)
+            self.characters[char] = pygame.transform.scale(image, (new_width, new_height))
+            self.characters[char] = {
+                "image": self.characters[char],
+                "rect": pygame.Rect(self.screen_width - new_width, self.screen_height - new_height, new_width, new_height)
+            }
+
+        max_char_width = max(target_sizes[char][0] * scale_factor for char in target_sizes)
+        self.text_max_width = self.screen_width - int(max_char_width) - 60
 
         self.blueberry_items = {
             "footprints": {"rect": pygame.Rect(200, 100, 100, 50), "clicked": False},
@@ -164,13 +177,12 @@ class Level2:
         self.update_text_animation(current_time)
         screen.fill((20, 20, 20))
         self.scenes[self.current_scene](screen)
+        
         if self.current_scene == "intro":
             if self.current_line_index >= 2:
                 self.current_character = "blueberry"
-            screen.blit(self.characters[self.current_character], self.character_rect)
-        else:
-            screen.blit(self.characters[self.current_character], self.character_rect)
-        if self.current_scene == "outro":
+                screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
+        elif self.current_scene == "outro":
             if self.current_line_index == 0:
                 self.current_character = "persimmona"
             elif self.current_line_index == 1:
@@ -187,6 +199,9 @@ class Level2:
                 self.current_character = "blueberry"
             elif self.current_line_index == 7:
                 self.current_character = "blueberry"
+            screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
+        else:
+            screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
 
     def is_completed(self):
         return self.completed
@@ -199,7 +214,7 @@ class Level2:
                 text_rect = text_surface.get_rect(center=(self.screen_width // 2, y_pos + i * 40))
             else:
                 text_rect = text_surface.get_rect(topleft=(50, y_pos + i * 40))
-                if (self.current_scene != "intro" or self.current_line_index >= 2) and text_rect.right > self.character_rect.left:
+                if (self.current_scene != "intro" or self.current_line_index >= 2) and text_rect.right > self.characters[self.current_character]["rect"].left:
                     text_rect.topleft = (50, y_pos + (i + 1) * 40)
             screen.blit(text_surface, text_rect)
 
@@ -237,12 +252,10 @@ class Level2:
             if self.blueberry_dialogue_state in ("start", "footprints"):
                 self.blueberry_dialogue = "Зарисовала след. Надо проверить остальной дом."
                 self.blueberry_dialogue_state = "done"
-                self.footprints_drawn = True
                 self.scene_finished = True
             elif self.blueberry_dialogue_state == "wrong":
                 self.blueberry_dialogue = "Теперь можно зарисовать след."
                 self.blueberry_dialogue_state = "done"
-                self.footprints_drawn = True
                 self.scene_finished = True
         else:
             self.blueberry_dialogue = "Сначала нужно осмотреть следы."
