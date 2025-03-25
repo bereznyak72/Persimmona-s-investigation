@@ -28,7 +28,10 @@ COLORS = {
     "BLUEBERRY_BG": (150, 200, 255),# Фон blueberry_room
     "ELECTRICAL_ON": (200, 200, 200), # Фон electrical_room (вкл)
     "ELECTRICAL_OFF": (50, 50, 50),  # Фон electrical_room (выкл)
-    "PINEAPPLE_BG": (255, 200, 150)  # Фон pineapple_room
+    "PINEAPPLE_BG": (255, 200, 150),  # Фон pineapple_room
+    "WOOD_BROWN": (139, 69, 19),   # Коричневый цвет дерева
+    "DARK_BROWN": (92, 51, 23),     # Тёмно-коричневый для линий пола
+    "BLUE": (0, 0, 255)
 }
 
 # Пути к файлам
