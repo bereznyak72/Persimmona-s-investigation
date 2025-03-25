@@ -145,8 +145,8 @@ class Game():
         screen.fill(BLACK)
 
         # fonts
-        title_font = pygame.font.Font('Persimmona.ttf', 44)
-        content_font = pygame.font.Font('Persimmona.ttf', 24)
+        title_font = pygame.font.Font('assets/fonts/Persimmona.ttf', 44)
+        content_font = pygame.font.Font('assets/fonts/Persimmona.ttf', 24)
 
         # text
         title_text = title_font.render('Cucumber Game', True, WHITE)
