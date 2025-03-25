@@ -8,7 +8,7 @@ class Level4:
     def run(self, screen):
         screen.fill((75, 75, 75))
         font = pygame.font.Font(None, 36)
-        text = font.render("Level 5", True, (255, 255, 255))
+        text = font.render("Level 4", True, (255, 255, 255))
         screen.blit(text, (200, 250))
 
     def handle_event(self, event):

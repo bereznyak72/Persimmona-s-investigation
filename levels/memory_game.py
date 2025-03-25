@@ -64,13 +64,6 @@ class Game():
                 if self.game_completed and event.type == pygame.KEYDOWN:
                     pygame.quit()
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.level += 1
-                        if self.level >= 11:
-                            self.level = 1
-                        self.generate_level()
-
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for tile in self.tiles_group:
                         if tile.rect.collidepoint(event.pos):
@@ -136,7 +129,7 @@ class Game():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and self.level_complete:
                     self.level += 1
-                    if self.level >= 10:
+                    if self.level > 10:
                         self.game_completed = True
                     self.generate_level()
 
