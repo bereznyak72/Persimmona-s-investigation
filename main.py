@@ -5,7 +5,7 @@ from levels import Level1, Level2, Level3, Level4, Level5, Level6, Epilogue, Pro
 pygame.init()
 DEFAULT_RESOLUTION = pygame.display.Info()
 FONT_LARGE_SIZE = 0.1
-FONT_SMALL_SIZE = 0.06
+FONT_SMALL_SIZE = 0.053
 BUTTON_PADDING = 0.015
 BUTTON_RADIUS = 0.01
 
@@ -14,10 +14,10 @@ class MainMenu:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.Font(None, int(self.screen_height * FONT_LARGE_SIZE))
-        self.small_font = pygame.font.Font(None, int(self.screen_height * FONT_SMALL_SIZE))
+        self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_LARGE_SIZE))
+        self.small_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_SMALL_SIZE))
         self.selected = 0
-        self.options = ["Начать игру", "Настройки", "Выход"]
+        self.options = ["Start game", "Settings", "Exit"]
         self.button_rects = []
         self.title_surface = self.font.render("Persimmona's Investigation", True, (255, 255, 255))
         self.title_shadow_surface = self.font.render("Persimmona's Investigation", True, (100, 100, 100))
@@ -70,13 +70,13 @@ class SettingsMenu:
     def __init__(self, screen_width, screen_height, current_resolution):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.Font(None, int(self.screen_height * FONT_LARGE_SIZE))
-        self.small_font = pygame.font.Font(None, int(self.screen_height * FONT_SMALL_SIZE))
+        self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_LARGE_SIZE))
+        self.small_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_SMALL_SIZE))
         self.selected = 0
         self.resolutions = [(800, 600), (1024, 768), (1280, 720), (1920, 1080)]
         self.current_resolution = current_resolution
         self.button_rects = []
-        self.title_surface = self.font.render("Настройки", True, (255, 255, 255))
+        self.title_surface = self.font.render("Settings", True, (255, 255, 255))
         self.show_resolutions = False  # Флаг для выпадающего списка
 
     def run(self, screen):
@@ -93,7 +93,7 @@ class SettingsMenu:
             screen.blit(self.title_surface, title_rect)
 
             # Пункт "Выбрать разрешение"
-            res_text = f"Выбрать разрешение: {new_resolution[0]}x{new_resolution[1]}"
+            res_text = f"Select a resolution: {new_resolution[0]}x{new_resolution[1]}"
             color = (0, 255, 0) if self.selected == 0 else (255, 255, 255)
             text = self.small_font.render(res_text, True, color)
             text_rect = text.get_rect(center=(self.screen_width / 2, self.screen_height * 0.4))
@@ -116,7 +116,7 @@ class SettingsMenu:
                     screen.blit(text, text_rect)
 
             # Кнопка "Применить изменения"
-            apply_text = "Применить изменения"
+            apply_text = "Confirm changes"
             color = (0, 255, 0) if self.selected == (1 + len(self.resolutions) if self.show_resolutions else 1) else (
             255, 255, 255)
             text = self.small_font.render(apply_text, True, color)
@@ -128,7 +128,7 @@ class SettingsMenu:
             screen.blit(text, apply_rect)
 
             # Кнопка "Назад"
-            back_text = "Назад"
+            back_text = "Back"
             color = (0, 255, 0) if self.selected == (2 + len(self.resolutions) if self.show_resolutions else 2) else (
             255, 255, 255)
             text = self.small_font.render(back_text, True, color)
@@ -194,12 +194,12 @@ class EndScreen:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.Font(None, int(self.screen_height * FONT_LARGE_SIZE))
-        self.small_font = pygame.font.Font(None, int(self.screen_height * FONT_SMALL_SIZE))
+        self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_LARGE_SIZE))
+        self.small_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * FONT_SMALL_SIZE))
         self.selected = 0
-        self.options = ["Главное меню", "Выход"]
+        self.options = ["Main menu", "Exit"]
         self.button_rects = []
-        self.title_surface = self.font.render("Игра завершена!", True, (255, 255, 255))
+        self.title_surface = self.font.render("Game completed!", True, (255, 255, 255))
 
     def run(self, screen):
         clock = pygame.time.Clock()

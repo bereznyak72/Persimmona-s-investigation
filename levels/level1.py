@@ -6,8 +6,8 @@ class Level1:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.SysFont("Arial", int(self.screen_height * 0.035), bold=False)
-        self.list_font = pygame.font.SysFont("Arial", int(self.screen_height * 0.03), bold=True)
+        self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
+        self.list_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
         self.completed = False
         self.current_scene = "intro"
         self.scenes = {
