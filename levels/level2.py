@@ -1,6 +1,5 @@
 import pygame
-from utils.constants import *
-from utils.helpers import *
+from utils import *
 
 class FootprintTask:
     def __init__(self, screen_width, screen_height, font, text_area_height, text_max_width):

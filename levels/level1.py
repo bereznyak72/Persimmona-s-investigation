@@ -1,6 +1,5 @@
 import pygame
-from utils.constants import *
-from utils.helpers import *
+from utils import *
 
 class Level1:
     def __init__(self, screen_width, screen_height):
