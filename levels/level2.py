@@ -14,10 +14,8 @@ class FootprintTask:
         self.waiting_for_click = True
         self.stage = 1
         
-        # Детализированный шаблон стопы с анатомическими деталями
         self.foot_template = [
-            # Пятка (широкая и округлая)
-            (screen_width // 2 - 180, screen_height // 2 + 120),  # Начальная точка
+            (screen_width // 2 - 180, screen_height // 2 + 120),
             (screen_width // 2 - 160, screen_height // 2 + 140),
             (screen_width // 2 - 130, screen_height // 2 + 160),
             (screen_width // 2 - 100, screen_height // 2 + 170),
@@ -28,35 +26,26 @@ class FootprintTask:
             (screen_width // 2 + 50, screen_height // 2 + 140),
             (screen_width // 2 + 80, screen_height // 2 + 130),
             (screen_width // 2 + 110, screen_height // 2 + 120),
-            # Внутренний свод стопы (выгнутый)
             (screen_width // 2 + 140, screen_height // 2 + 90),
             (screen_width // 2 + 150, screen_height // 2 + 60),
             (screen_width // 2 + 155, screen_height // 2 + 30),
-            # Внешний край стопы
             (screen_width // 2 + 165, screen_height // 2),
             (screen_width // 2 + 170, screen_height // 2 - 30),
             (screen_width // 2 + 165, screen_height // 2 - 60),
-            # Подушечка под пальцами
             (screen_width // 2 + 150, screen_height // 2 - 90),
             (screen_width // 2 + 130, screen_height // 2 - 110),
             (screen_width // 2 + 100, screen_height // 2 - 120),
-            # Большой палец (широкий)
             (screen_width // 2 + 70, screen_height // 2 - 130),
             (screen_width // 2 + 40, screen_height // 2 - 140),
             (screen_width // 2 + 10, screen_height // 2 - 145),
-            # Указательный палец
             (screen_width // 2 - 20, screen_height // 2 - 140),
             (screen_width // 2 - 50, screen_height // 2 - 135),
-            # Средний палец
             (screen_width // 2 - 80, screen_height // 2 - 130),
             (screen_width // 2 - 110, screen_height // 2 - 125),
-            # Безымянный палец
             (screen_width // 2 - 140, screen_height // 2 - 120),
             (screen_width // 2 - 170, screen_height // 2 - 115),
-            # Мизинец (узкий)
             (screen_width // 2 - 200, screen_height // 2 - 100),
             (screen_width // 2 - 220, screen_height // 2 - 85),
-            # Возвращение к пятке
             (screen_width // 2 - 230, screen_height // 2 - 50),
             (screen_width // 2 - 225, screen_height // 2 - 20),
             (screen_width // 2 - 210, screen_height // 2 + 20),
@@ -64,10 +53,8 @@ class FootprintTask:
             (screen_width // 2 - 180, screen_height // 2 + 100)
         ]
         
-        # Детализированный шаблон ладони с анатомическими деталями
         self.hand_template = [
-            # Основание ладони (широкое)
-            (screen_width // 2 - 160, screen_height // 2 + 100),  # Начальная точка
+            (screen_width // 2 - 160, screen_height // 2 + 100),
             (screen_width // 2 - 140, screen_height // 2 + 120),
             (screen_width // 2 - 110, screen_height // 2 + 135),
             (screen_width // 2 - 80, screen_height // 2 + 145),
@@ -78,31 +65,24 @@ class FootprintTask:
             (screen_width // 2 + 70, screen_height // 2 + 140),
             (screen_width // 2 + 100, screen_height // 2 + 130),
             (screen_width // 2 + 130, screen_height // 2 + 110),
-            # Большой палец (отдельный и широкий)
             (screen_width // 2 + 160, screen_height // 2 + 80),
             (screen_width // 2 + 180, screen_height // 2 + 50),
             (screen_width // 2 + 200, screen_height // 2 + 20),
             (screen_width // 2 + 210, screen_height // 2 - 10),
             (screen_width // 2 + 205, screen_height // 2 - 40),
             (screen_width // 2 + 190, screen_height // 2 - 70),
-            # Подушечка ладони под пальцами
             (screen_width // 2 + 170, screen_height // 2 - 100),
             (screen_width // 2 + 140, screen_height // 2 - 120),
             (screen_width // 2 + 110, screen_height // 2 - 130),
-            # Указательный палец
             (screen_width // 2 + 80, screen_height // 2 - 140),
             (screen_width // 2 + 50, screen_height // 2 - 150),
             (screen_width // 2 + 20, screen_height // 2 - 160),
-            # Средний палец (самый длинный)
             (screen_width // 2 - 10, screen_height // 2 - 170),
             (screen_width // 2 - 40, screen_height // 2 - 180),
-            # Безымянный палец
             (screen_width // 2 - 70, screen_height // 2 - 170),
             (screen_width // 2 - 100, screen_height // 2 - 160),
-            # Мизинец (короткий)
             (screen_width // 2 - 130, screen_height // 2 - 150),
             (screen_width // 2 - 160, screen_height // 2 - 140),
-            # Возвращение к основанию
             (screen_width // 2 - 180, screen_height // 2 - 110),
             (screen_width // 2 - 190, screen_height // 2 - 80),
             (screen_width // 2 - 195, screen_height // 2 - 50),
@@ -114,8 +94,8 @@ class FootprintTask:
         self.current_template = self.foot_template
         self.player_path = []
         self.drawing = False
-        self.covered_points = []  # Список для проверки порядка прохождения
-        self.current_point_index = 0  # Текущая ожидаемая точка
+        self.covered_points = []
+        self.current_point_index = 0
         
         self.max_deviation = 5
         self.min_points = 50
@@ -158,7 +138,7 @@ class FootprintTask:
         
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = event.pos
-            if self.is_near_point(pos, self.current_template[0]):  # Проверка начальной точки
+            if self.is_near_point(pos, self.current_template[0]):
                 self.drawing = True
                 self.player_path = [pos]
                 self.update_covered_points(pos)
@@ -204,9 +184,9 @@ class FootprintTask:
     def check_accuracy(self):
         if len(self.player_path) < self.min_points:
             self.result_text = "Слишком мало точек! Попробуй ещё раз."
-            self.player_path = []  # Сброс пути игрока
-            self.covered_points = []  # Сброс покрытых точек
-            self.current_point_index = 0  # Сброс текущей точки
+            self.player_path = []
+            self.covered_points = []
+            self.current_point_index = 0
             self.start_text_animation(self.result_text)
             return
         
@@ -228,9 +208,9 @@ class FootprintTask:
                 self.success_timer = pygame.time.get_ticks()
         else:
             self.result_text = f"Пройдено: {accuracy:.1f}%. Пройди все точки по порядку!"
-            self.player_path = []  # Сброс пути игрока
-            self.covered_points = []  # Сброс покрытых точек
-            self.current_point_index = 0  # Сброс текущей точки
+            self.player_path = []
+            self.covered_points = []
+            self.current_point_index = 0
         
         self.start_text_animation(self.result_text)
 
@@ -255,20 +235,17 @@ class FootprintTask:
         
         pygame.draw.rect(screen, COLORS["GRAY"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         
-        # Отрисовка шаблона с увеличенной шириной линии и красной следующей точкой
         pygame.draw.lines(screen, COLORS["WHITE"], True, self.current_template, 5)
         for i, point in enumerate(self.current_template):
-            if i == self.current_point_index and i not in self.covered_points:  # Следующая точка красная
+            if i == self.current_point_index and i not in self.covered_points:
                 pygame.draw.circle(screen, COLORS["RED"], point, 6)
             else:
                 color = COLORS["GREEN"] if i in self.covered_points else COLORS["WHITE"]
                 pygame.draw.circle(screen, color, point, 6)
         
-        # Отрисовка пути игрока
         if len(self.player_path) > 1:
             pygame.draw.lines(screen, COLORS["BLUE"], False, self.player_path, 5)
         
-        # Прогресс-бар
         progress = len(self.covered_points) / len(self.current_template)
         bar_width = 200
         bar_height = 20
@@ -278,7 +255,6 @@ class FootprintTask:
         pygame.draw.rect(screen, COLORS["GREEN"], (bar_x, bar_y, bar_width * progress, bar_height))
         pygame.draw.rect(screen, COLORS["WHITE"], (bar_x, bar_y, bar_width, bar_height), 2)
         
-        # Анимация успеха
         if self.success_animation:
             if current_time - self.success_timer < self.success_duration:
                 alpha = int(255 * (1 - (current_time - self.success_timer) / self.success_duration))
