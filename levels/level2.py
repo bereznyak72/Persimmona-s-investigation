@@ -1,5 +1,6 @@
 import pygame
 from utils import *
+import random
 
 class FootprintTask:
     def __init__(self, screen_width, screen_height, font, text_area_height, text_max_width):
@@ -56,10 +57,12 @@ class FootprintTask:
         self.current_template = self.foot_template
         self.player_path = []
         self.drawing = False
+        self.covered_points = set()  # Множество покрытых точек
         
         self.max_deviation = 30
         self.min_points = 30
         self.required_coverage = 0.8
+        self.max_gap = 50  # Максимальный разрыв между точками для непрерывности
         
         self.instruction_text = "Обведи след мышью, удерживая левую кнопку!"
         self.hint_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
@@ -70,13 +73,18 @@ class FootprintTask:
         self.char_index = 0
         self.text_animation_speed = 50
         self.last_char_time = 0
-        
+        self.success_animation = False
+        self.success_timer = 0
+        self.success_duration = 500  # Длительность анимации успеха в мс
+
     def start_task(self):
         self.task_active = True
         self.waiting_for_click = False
         self.player_path = []
         self.drawing = False
+        self.covered_points = set()
         self.result_text = ""
+        self.success_animation = False
         self.start_text_animation(self.instruction_text)
 
     def handle_event(self, event):
@@ -92,10 +100,17 @@ class FootprintTask:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             self.drawing = True
             self.player_path = [event.pos]
+            self.update_covered_points()
             return True
         
         elif event.type == pygame.MOUSEMOTION and self.drawing:
-            self.player_path.append(event.pos)
+            # Проверка непрерывности
+            last_point = self.player_path[-1]
+            new_point = event.pos
+            distance = ((new_point[0] - last_point[0]) ** 2 + (new_point[1] - last_point[1]) ** 2) ** 0.5
+            if distance <= self.max_gap:
+                self.player_path.append(new_point)
+                self.update_covered_points()
             return True
         
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.drawing:
@@ -105,9 +120,19 @@ class FootprintTask:
         
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             self.player_path = []
+            self.covered_points = set()
             return True
         
         return False
+
+    def update_covered_points(self):
+        """Обновляет множество покрытых точек в реальном времени"""
+        latest_point = self.player_path[-1]
+        for i, template_point in enumerate(self.current_template):
+            distance = ((latest_point[0] - template_point[0]) ** 2 + 
+                       (latest_point[1] - template_point[1]) ** 2) ** 0.5
+            if distance <= self.max_deviation:
+                self.covered_points.add(i)
 
     def check_accuracy(self):
         if len(self.player_path) < self.min_points:
@@ -115,16 +140,8 @@ class FootprintTask:
             self.start_text_animation(self.result_text)
             return
         
-        covered_points = set()
-        for player_point in self.player_path:
-            for i, template_point in enumerate(self.current_template):
-                distance = ((player_point[0] - template_point[0]) ** 2 + 
-                          (player_point[1] - template_point[1]) ** 2) ** 0.5
-                if distance <= self.max_deviation:
-                    covered_points.add(i)
-        
-        coverage_ratio = len(covered_points) / len(self.current_template)
-        accuracy = (len(covered_points) / len(self.current_template)) * 100
+        coverage_ratio = len(self.covered_points) / len(self.current_template)
+        accuracy = coverage_ratio * 100
         
         if coverage_ratio >= self.required_coverage:
             if self.stage == 1:
@@ -132,9 +149,12 @@ class FootprintTask:
                 self.stage = 2
                 self.current_template = self.hand_template
                 self.player_path = []
+                self.covered_points = set()
             else:
                 self.result_text = f"Отлично! Точность: {accuracy:.1f}%. След ладони зарисован!"
                 self.completed = True
+                self.success_animation = True
+                self.success_timer = pygame.time.get_ticks()
         else:
             self.result_text = f"Точность: {accuracy:.1f}%. Надо покрыть больше следа!"
         
@@ -161,10 +181,35 @@ class FootprintTask:
         
         pygame.draw.rect(screen, COLORS["GRAY"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
         
-        pygame.draw.lines(screen, COLORS["WHITE"], True, self.current_template, 8)
+        # Отрисовка шаблона с подсветкой покрытых точек
+        for i, point in enumerate(self.current_template):
+            color = COLORS["GREEN"] if i in self.covered_points else COLORS["WHITE"]
+            pygame.draw.circle(screen, color, point, 4)
+        pygame.draw.lines(screen, COLORS["WHITE"], True, self.current_template, 2)
         
+        # Отрисовка пути игрока
         if len(self.player_path) > 1:
             pygame.draw.lines(screen, COLORS["BLUE"], False, self.player_path, 4)
+        
+        # Прогресс-бар
+        progress = len(self.covered_points) / len(self.current_template)
+        bar_width = 200
+        bar_height = 20
+        bar_x = (self.screen_width - bar_width) // 2
+        bar_y = self.screen_height - self.text_area_height - 40
+        pygame.draw.rect(screen, COLORS["DARK_GRAY"], (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(screen, COLORS["GREEN"], (bar_x, bar_y, bar_width * progress, bar_height))
+        pygame.draw.rect(screen, COLORS["WHITE"], (bar_x, bar_y, bar_width, bar_height), 2)
+        
+        # Анимация успеха
+        if self.success_animation:
+            if current_time - self.success_timer < self.success_duration:
+                alpha = int(255 * (1 - (current_time - self.success_timer) / self.success_duration))
+                overlay = pygame.Surface((self.screen_width, self.screen_height - self.text_area_height), pygame.SRCALPHA)
+                overlay.fill((0, 255, 0, alpha))
+                screen.blit(overlay, (0, 0))
+            else:
+                self.success_animation = False
         
         render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
         
@@ -182,6 +227,7 @@ class Level2:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
+        self.hint_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.03))
         self.completed = False
         self.current_scene = "intro"
         self.scenes = {
@@ -206,7 +252,7 @@ class Level2:
             "Это семейная реликвия, я не могу его потерять!",
             "Прошу, помогите мне вернуть его!",
             "Я слышала, вы лучший детектив в городе.",
-            "Я даже не знаю, кто мог это сделать... У меня нет врагов…",
+            "Я даже не знаю, кто мог это сделать...",
         ]
         self.outro_text = [
             "Не волнуйтесь, мы найдём ваш ананас.",
@@ -269,7 +315,9 @@ class Level2:
         start_x = (self.screen_width - total_width) // 2
         switch_y = (self.screen_height - self.text_area_height - switch_size[1]) // 2
 
-        self.correct_combination = [False, False, True, False, True]
+        self.correct_combination = []
+        for i in range(5):
+            self.correct_combination.append(random.choice([True, False]))
         self.electrical_items = {
             "switch1": {"rect": pygame.Rect(start_x, switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
             "switch2": {"rect": pygame.Rect(start_x + (switch_size[0] + spacing), switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
@@ -284,6 +332,7 @@ class Level2:
         self.door_unlocked = False
         self.animation_speed = 10
         self.shake_duration = 500
+        self.attempts_left = 6
 
         self.pineapple_items = {
             "glass_shards": {"rect": pygame.Rect(200, 150, 100, 50), "clicked": False},
@@ -291,6 +340,16 @@ class Level2:
         }
         self.pineapple_dialogue = "Осколки стекла у подоконника… Надо проверить запах."
         self.pineapple_dialogue_state = "start"
+
+    def reset_combination(self):
+        self.correct_combination = [random.choice([True, False]) for _ in range(5)]
+        self.attempts_left = 6
+        for item in self.electrical_items.values():
+            item["state"] = False
+            item["animating"] = False
+            item["anim_progress"] = 0
+        self.electrical_dialogue = "Комбинация сброшена! У тебя снова 6 попыток."
+        start_text_animation(self, self.electrical_dialogue)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.current_text == self.full_text:
@@ -438,6 +497,8 @@ class Level2:
 
     def update_electrical_dialogue(self):
         current_combination = [self.electrical_items[f"switch{i+1}"]["state"] for i in range(5)]
+        self.attempts_left -= 1
+        
         if current_combination == self.correct_combination:
             self.electrical_dialogue = "Точно! Дверь открыта, свет горит!"
             self.electrical_dialogue_state = "done"
@@ -446,11 +507,16 @@ class Level2:
             self.lights_off = False
         else:
             correct_count = sum(1 for i in range(5) if current_combination[i] == self.correct_combination[i])
-            self.electrical_dialogue = f"Нет, это не та комбинация. Правильных рубильников: {correct_count}/5."
+            if self.attempts_left > 0:
+                self.electrical_dialogue = f"Нет, это не та комбинация. Правильных: {correct_count}/5. Осталось попыток: {self.attempts_left}."
+            else:
+                self.electrical_dialogue = "Попытки закончились! Генерирую новую комбинацию..."
+                self.reset_combination()
             self.electrical_dialogue_state = "wrong"
             self.lights_off = True
             self.open_button["shaking"] = True
             self.open_button["shake_time"] = pygame.time.get_ticks()
+        
         start_text_animation(self, self.electrical_dialogue)
 
     def update_pineapple_dialogue(self, item):
@@ -528,6 +594,13 @@ class Level2:
 
         pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
         render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+
+        attempts_text = f"Попытки: {self.attempts_left}/6"
+        attempts_surface = self.hint_font.render(attempts_text, True, COLORS["WHITE"])
+        attempts_rect = attempts_surface.get_rect(topright=(self.screen_width - 20, 20))
+        pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], attempts_rect.inflate(20, 10), border_radius=8)
+        pygame.draw.rect(screen, COLORS["WHITE"], attempts_rect.inflate(20, 10), 2, border_radius=8)
+        screen.blit(attempts_surface, attempts_rect)
 
     def pineapple_room_scene(self, screen):
         pygame.draw.rect(screen, COLORS["PINEAPPLE_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
