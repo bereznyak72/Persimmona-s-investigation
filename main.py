@@ -278,7 +278,7 @@ def main():
 
         levels = [Prologue(current_resolution[0], current_resolution[1]), Level1(current_resolution[0], current_resolution[1]),
                   Level2(current_resolution[0], current_resolution[1]), Level3(),
-                  Level4(), Level5(),
+                  Level4(), Level5(current_resolution[0], current_resolution[1]),
                   Level6(), Epilogue()]
         current_level_index = 0
 
