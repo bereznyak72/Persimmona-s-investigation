@@ -104,7 +104,6 @@ class FootprintTask:
         
         self.instruction_text = "Обведи след по порядку, начиная с красной точки!"
         self.hint_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
-        self.hint_text = "Нажми R для сброса"
         self.result_text = ""
         self.current_text = ""
         self.full_text = ""
@@ -195,14 +194,14 @@ class FootprintTask:
         
         if coverage_ratio >= self.required_coverage and self.current_point_index >= len(self.current_template):
             if self.stage == 1:
-                self.result_text = "След стопы зарисован! Теперь обведи след ладони."
+                self.result_text = "Первый след зарисован! Теперь обведи второй след."
                 self.stage = 2
                 self.current_template = self.hand_template
                 self.player_path = []
                 self.covered_points = []
                 self.current_point_index = 0
             else:
-                self.result_text = f"Отлично! Точность: {accuracy:.1f}%. След ладони зарисован!"
+                self.result_text = f"Отлично! Точность: {accuracy:.1f}%. Второй след зарисован!"
                 self.completed = True
                 self.success_animation = True
                 self.success_timer = pygame.time.get_ticks()
@@ -265,12 +264,6 @@ class FootprintTask:
                 self.success_animation = False
         
         render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
-        
-        hint_surface = self.hint_font.render(self.hint_text, True, COLORS["WHITE"])
-        hint_rect = hint_surface.get_rect(topright=(self.screen_width - 10, 10))
-        pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], hint_rect.inflate(15, 15), border_radius=10)
-        pygame.draw.rect(screen, COLORS["WHITE"], hint_rect.inflate(15, 15), 2, border_radius=10)
-        screen.blit(hint_surface, hint_rect)
 
     def is_completed(self):
         return self.completed
@@ -301,14 +294,14 @@ class Level2:
         self.intro_text = [
             "Персиммона входит в свою контору.",
             "Там её встречает весёлый помощник, и дама в синем платье, вся на нервах.",
-            "Мой золотой ананас украли прошлой ночью!",
-            "Это семейная реликвия, я не могу его потерять!",
-            "Прошу, помогите мне вернуть его!",
+            "Меня обокрали прошлой ночью!",
+            "У меня дома много ценного",
+            "Прошу, помогите мне вернуть украденное!",
             "Я слышала, вы лучший детектив в городе.",
             "Я даже не знаю, кто мог это сделать...",
         ]
         self.outro_text = [
-            "Не волнуйтесь, мы найдём ваш ананас.",
+            "Не волнуйтесь, мы найдём вора.",
             "Кстати, ночью ограбили Булочную и Мясную неподалёку!",
             "Интересно… Пора проверить улики дальше.",
             "Это может быть связано, надо выяснить.",
@@ -319,10 +312,10 @@ class Level2:
         ]
         self.basement_search_text = [
             "Надо обследовать всю квартиру, каждый уголок.",
-            "Я проверю подвал, вдруг там что-то спрятано!",
+            "Я проверю второй этаж, вдруг там что-то найду!",
             "Я останусь тут, осмотрю окна ещё раз… Вдруг что пропустили.",
-            "Хорошо, Кукуруза, будь осторожен там внизу.",
-            "Эй, ребята! Тут в подвале дверь, и она заперта на магниты!",
+            "Хорошо, Кукуруза, зови если что.",
+            "Эй, ребята! Тут дверь, и она заперта на магниты!",
             "Магниты? Это необычно… Надо найти способ открыть её.",
             "Где-то должны быть рубильники.",
             "Я нашёл их!"
