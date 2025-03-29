@@ -14,7 +14,7 @@ class Tile(pygame.sprite.Sprite):
 
         self.image = self.back_image
         self.rect = self.image.get_rect(topleft = (x, y))
-        self.shown = False # Должно быть False
+        self.shown = False
 
     def update(self):
         self.image = self.original_image if self.shown else self.back_image
@@ -36,7 +36,7 @@ class Game():
         self.all_bakery_products = [f for f in os.listdir('levels/memory_game_fonts') if os.path.join('levels/memory_game_fonts', f)]
 
         self.img_width, self.img_height = (128, 128)
-        self.padding = 20 # Было 20
+        self.padding = 20
         self.margin_top = 170
         self.cols = 10
         self.rows = 5
@@ -117,10 +117,15 @@ class Game():
         bakery_products = random.sample(self.all_bakery_products, (self.level + self.level + 2))
         if self.level == 10:
             bakery_products = random.sample(self.all_bakery_products, (self.level + self.level + 5))
-        bakery_products_copy = bakery_products.copy()
-        bakery_products.extend(bakery_products_copy)
-        random.shuffle(bakery_products)
-        return bakery_products
+        if self.level in [1,5,10]:
+            bakery_products_copy = bakery_products.copy()
+            bakery_products.extend(bakery_products_copy)
+            random.shuffle(bakery_products)
+            return bakery_products
+        elif self.level == 2:
+            self.level = 5
+        else:
+            self.level = 10
 
     def user_input(self, event_list):
         for event in event_list:
@@ -131,6 +136,10 @@ class Game():
                     self.level += 1
                     if self.level > 10:
                         self.game_completed = True
+                    elif self.level == 2:
+                        self.level = 5
+                    else:
+                        self.level = 10
                     self.generate_level()
 
 
@@ -145,7 +154,12 @@ class Game():
         title_text = title_font.render('Cucumber Game', True, WHITE)
         title_rect = title_text.get_rect(midtop = (WINDOW_WIDTH // 2, 10))
 
-        level_text = content_font.render('Level ' + str(self.level), True, WHITE)
+        if self.level == 1:
+            level_text = content_font.render('Level 1', True, WHITE)
+        if self.level == 5:
+            level_text = content_font.render('Level 2', True, WHITE)
+        if self.level == 10:
+            level_text = content_font.render('Level 3', True, WHITE)
         level_rect = level_text.get_rect(midtop = (WINDOW_WIDTH // 2, 80))
 
         info_text = content_font.render('Find 2 of each', True, WHITE)

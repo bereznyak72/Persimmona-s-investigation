@@ -77,6 +77,9 @@ class Level5:  # Крестики нолики
 
     def handle_event(self, event):
         """Обрабатывает события Pygame."""
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            self.completed = True
+            
         if not self.game_started and not self.show_puzzle and not self.puzzle_solved:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.dialog_index < len(self.show_dialog()) - 1:

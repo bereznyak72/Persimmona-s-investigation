@@ -7,7 +7,8 @@ class Prologue:
         self.number = 1
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.font = pygame.font.SysFont("Arial", int(self.screen_height * 0.035), bold=False)
+        self.font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
+        #self.font = pygame.font.SysFont("Arial", int(self.screen_height * 0.035), bold=False)
         self.text_animation_speed = 15
         self.last_char_time = 0
         self.current_text = ""
