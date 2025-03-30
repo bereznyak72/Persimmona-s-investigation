@@ -2,6 +2,7 @@ import pygame
 from utils import *
 import random
 
+
 class FootprintTask:
     def __init__(self, screen_width, screen_height, font, text_area_height, text_max_width):
         self.screen_width = screen_width
@@ -52,7 +53,7 @@ class FootprintTask:
             (screen_width // 2 - 195, screen_height // 2 + 60),
             (screen_width // 2 - 180, screen_height // 2 + 100)
         ]
-        
+
         self.hand_template = [
             (screen_width // 2 - 160, screen_height // 2 + 100),
             (screen_width // 2 - 140, screen_height // 2 + 120),
@@ -90,29 +91,33 @@ class FootprintTask:
             (screen_width // 2 - 180, screen_height // 2 + 20),
             (screen_width // 2 - 170, screen_height // 2 + 60)
         ]
-        
+
         self.current_template = self.foot_template
         self.player_path = []
         self.drawing = False
         self.covered_points = []
         self.current_point_index = 0
-        
+
         self.max_deviation = 5
         self.min_points = 50
         self.required_coverage = 0.8
         self.max_gap = 2
-        
+
         self.instruction_text = "Обведи след по порядку, начиная с красной точки!"
         self.hint_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
         self.result_text = ""
         self.current_text = ""
         self.full_text = ""
         self.char_index = 0
-        self.text_animation_speed = 50
+        self.text_animation_speed = 25
         self.last_char_time = 0
         self.success_animation = False
         self.success_timer = 0
         self.success_duration = 500
+
+        self.background_color = (139, 69, 19)
+        self.shadow_surface = pygame.Surface((screen_width, screen_height - text_area_height), pygame.SRCALPHA)
+        self.shadow_surface.fill((0, 0, 0, 50))
 
     def start_task(self):
         self.task_active = True
@@ -131,10 +136,10 @@ class FootprintTask:
                 self.start_task()
                 return True
             return False
-        
+
         if not self.task_active or self.completed:
             return False
-        
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = event.pos
             if self.is_near_point(pos, self.current_template[0]):
@@ -142,7 +147,7 @@ class FootprintTask:
                 self.player_path = [pos]
                 self.update_covered_points(pos)
             return True
-        
+
         elif event.type == pygame.MOUSEMOTION and self.drawing:
             last_point = self.player_path[-1]
             new_point = event.pos
@@ -151,18 +156,18 @@ class FootprintTask:
                 self.player_path.append(new_point)
                 self.update_covered_points(new_point)
             return True
-        
+
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.drawing:
             self.drawing = False
             self.check_accuracy()
             return True
-        
+
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             self.player_path = []
             self.covered_points = []
             self.current_point_index = 0
             return True
-        
+
         return False
 
     def is_near_point(self, pos, template_point):
@@ -173,7 +178,7 @@ class FootprintTask:
         """Проверка точек по порядку"""
         if self.current_point_index >= len(self.current_template):
             return
-        
+
         next_point = self.current_template[self.current_point_index]
         if self.is_near_point(pos, next_point):
             if self.current_point_index not in self.covered_points:
@@ -188,10 +193,10 @@ class FootprintTask:
             self.current_point_index = 0
             self.start_text_animation(self.result_text)
             return
-        
+
         coverage_ratio = len(self.covered_points) / len(self.current_template)
         accuracy = coverage_ratio * 100
-        
+
         if coverage_ratio >= self.required_coverage and self.current_point_index >= len(self.current_template):
             if self.stage == 1:
                 self.result_text = "Первый след зарисован! Теперь обведи второй след."
@@ -210,7 +215,7 @@ class FootprintTask:
             self.player_path = []
             self.covered_points = []
             self.current_point_index = 0
-        
+
         self.start_text_animation(self.result_text)
 
     def start_text_animation(self, text):
@@ -228,45 +233,63 @@ class FootprintTask:
     def run(self, screen):
         if self.waiting_for_click or not self.task_active:
             return
-        
+
         current_time = pygame.time.get_ticks()
         self.update_text_animation(current_time)
-        
-        pygame.draw.rect(screen, COLORS["GRAY"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        
-        pygame.draw.lines(screen, COLORS["WHITE"], True, self.current_template, 5)
+
+        pygame.draw.rect(screen, self.background_color,
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+
+        for x in range(0, self.screen_width, 20):
+            pygame.draw.line(screen, (160, 82, 45), (x, 0), (x, self.screen_height - self.text_area_height), 1)
+        for y in range(0, self.screen_height - self.text_area_height, 50):
+            pygame.draw.line(screen, (160, 82, 45), (0, y), (self.screen_width, y), 1)
+
+        shadow_points = [(x + 5, y + 5) for x, y in self.current_template]
+        pygame.draw.lines(screen, (0, 0, 0, 100), True, shadow_points, 5)
+        screen.blit(self.shadow_surface, (0, 0))
+
+        pygame.draw.lines(screen, (255, 215, 0), True, self.current_template, 6)
         for i, point in enumerate(self.current_template):
             if i == self.current_point_index and i not in self.covered_points:
                 pygame.draw.circle(screen, COLORS["RED"], point, 6)
             else:
-                color = COLORS["GREEN"] if i in self.covered_points else COLORS["WHITE"]
+                color = (0, 255, 0, 200) if i in self.covered_points else (255, 255, 255, 150)
                 pygame.draw.circle(screen, color, point, 6)
-        
+                pygame.draw.circle(screen, COLORS["WHITE"], point, 6, 1)
+
         if len(self.player_path) > 1:
-            pygame.draw.lines(screen, COLORS["BLUE"], False, self.player_path, 5)
-        
+            pygame.draw.lines(screen, (0, 0, 255, 200), False, self.player_path, 5)
+            for i in range(1, len(self.player_path)):
+                pygame.draw.circle(screen, (0, 0, 255, 100), self.player_path[i], 3)
+
         progress = len(self.covered_points) / len(self.current_template)
-        bar_width = 200
-        bar_height = 20
+        bar_width = 300
+        bar_height = 40
         bar_x = (self.screen_width - bar_width) // 2
-        bar_y = self.screen_height - self.text_area_height - 40
-        pygame.draw.rect(screen, COLORS["DARK_GRAY"], (bar_x, bar_y, bar_width, bar_height))
-        pygame.draw.rect(screen, COLORS["GREEN"], (bar_x, bar_y, bar_width * progress, bar_height))
-        pygame.draw.rect(screen, COLORS["WHITE"], (bar_x, bar_y, bar_width, bar_height), 2)
-        
+        bar_y = self.screen_height - self.text_area_height - 50
+        pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, bar_width, bar_height), border_radius=5)
+        pygame.draw.rect(screen, (0, 255, 0, 200), (bar_x, bar_y, bar_width * progress, bar_height), border_radius=5)
+        pygame.draw.rect(screen, (255, 255, 255, 150), (bar_x, bar_y, bar_width, bar_height), 2, border_radius=5)
+        progress_text = self.font.render(f"{int(progress * 100)}%", True, COLORS["WHITE"])
+        screen.blit(progress_text, progress_text.get_rect(center=(bar_x + bar_width // 2, bar_y + bar_height // 2)))
+
         if self.success_animation:
             if current_time - self.success_timer < self.success_duration:
                 alpha = int(255 * (1 - (current_time - self.success_timer) / self.success_duration))
-                overlay = pygame.Surface((self.screen_width, self.screen_height - self.text_area_height), pygame.SRCALPHA)
+                overlay = pygame.Surface((self.screen_width, self.screen_height - self.text_area_height),
+                                         pygame.SRCALPHA)
                 overlay.fill((0, 255, 0, alpha))
                 screen.blit(overlay, (0, 0))
             else:
                 self.success_animation = False
-        
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"])
 
     def is_completed(self):
         return self.completed
+
 
 class Level2:
     def __init__(self, screen_width, screen_height):
@@ -342,19 +365,18 @@ class Level2:
             self.characters[char] = pygame.transform.scale(image, (new_width, new_height))
             self.characters[char] = {
                 "image": self.characters[char],
-                "rect": pygame.Rect(self.screen_width - new_width, self.screen_height - new_height, new_width, new_height)
+                "rect": pygame.Rect(self.screen_width - new_width, self.screen_height - new_height, new_width,
+                                    new_height)
             }
 
         max_char_width = max(CHARACTER_SIZES[char][0] * scale_factor for char in CHARACTER_SIZES)
         self.text_max_width = self.screen_width - int(max_char_width) - 60
 
-        self.blueberry_items = {
-            "notebook": {"rect": pygame.Rect(320, 100, 50, 50), "clicked": False}
-        }
         self.blueberry_dialogue = "На полу следы грязи… Надо зарисовать их в блокнот."
         self.blueberry_dialogue_state = "start"
 
-        self.footprint_task = FootprintTask(self.screen_width, self.screen_height, self.font, self.text_area_height, self.text_max_width)
+        self.footprint_task = FootprintTask(self.screen_width, self.screen_height, self.font, self.text_area_height,
+                                            self.text_max_width)
         switch_size = (100, 200)
         spacing = 20
         total_width = (switch_size[0] * 5) + (spacing * 4)
@@ -365,20 +387,30 @@ class Level2:
         for i in range(5):
             self.correct_combination.append(random.choice([True, False]))
         self.electrical_items = {
-            "switch1": {"rect": pygame.Rect(start_x, switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
-            "switch2": {"rect": pygame.Rect(start_x + (switch_size[0] + spacing), switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
-            "switch3": {"rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 2, switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
-            "switch4": {"rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 3, switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0},
-            "switch5": {"rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 4, switch_y, switch_size[0], switch_size[1]), "state": False, "animating": False, "anim_progress": 0}
+            "switch1": {"rect": pygame.Rect(start_x, switch_y, switch_size[0], switch_size[1]), "state": False,
+                        "animating": False, "anim_progress": 0},
+            "switch2": {
+                "rect": pygame.Rect(start_x + (switch_size[0] + spacing), switch_y, switch_size[0], switch_size[1]),
+                "state": False, "animating": False, "anim_progress": 0},
+            "switch3": {
+                "rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 2, switch_y, switch_size[0], switch_size[1]),
+                "state": False, "animating": False, "anim_progress": 0},
+            "switch4": {
+                "rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 3, switch_y, switch_size[0], switch_size[1]),
+                "state": False, "animating": False, "anim_progress": 0},
+            "switch5": {
+                "rect": pygame.Rect(start_x + (switch_size[0] + spacing) * 4, switch_y, switch_size[0], switch_size[1]),
+                "state": False, "animating": False, "anim_progress": 0}
         }
-        self.open_button = {"rect": pygame.Rect(self.screen_width // 2 - 100, switch_y + switch_size[1] + 20, 200, 40), "shaking": False, "shake_time": 0}
+        self.open_button = {"rect": pygame.Rect(self.screen_width // 2 - 100, switch_y + switch_size[1] + 20, 200, 40),
+                            "shaking": False, "shake_time": 0}
         self.electrical_dialogue = "Нужно подобрать правильную комбинацию рубильников!"
         self.electrical_dialogue_state = "start"
         self.lights_off = False
         self.door_unlocked = False
         self.animation_speed = 10
         self.shake_duration = 500
-        self.attempts_left = 6
+        self.attempts_left = 5
 
         self.pineapple_items = {
             "glass_shards": {"rect": pygame.Rect(200, 150, 100, 50), "clicked": False},
@@ -389,7 +421,7 @@ class Level2:
 
     def reset_combination(self):
         self.correct_combination = [random.choice([True, False]) for _ in range(5)]
-        self.attempts_left = 6
+        self.attempts_left = 5
         for item in self.electrical_items.values():
             item["state"] = False
             item["animating"] = False
@@ -449,12 +481,8 @@ class Level2:
             elif self.current_scene == "blueberry_room":
                 if self.footprint_task.handle_event(event):
                     return
-                for item, data in self.blueberry_items.items():
-                    if data["rect"].collidepoint(pos) and not data["clicked"]:
-                        data["clicked"] = True
-                        self.current_character = "persimmona"
-                        self.update_blueberry_dialogue(item)
-                        break
+                if self.footprint_task.is_completed():
+                    self.update_blueberry_dialogue()
             elif self.current_scene == "electrical_room":
                 for item, data in self.electrical_items.items():
                     if data["rect"].collidepoint(pos) and not data["animating"]:
@@ -481,11 +509,12 @@ class Level2:
         update_text_animation(self, current_time)
         screen.fill(COLORS["BLACK"])
         self.scenes[self.current_scene](screen)
-        
+
         if self.current_scene == "intro":
             if self.current_line_index >= 2:
                 self.current_character = "blueberry"
-                screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
+                screen.blit(self.characters[self.current_character]["image"],
+                            self.characters[self.current_character]["rect"])
         elif self.current_scene == "outro":
             if self.current_line_index == 0:
                 self.current_character = "persimmona"
@@ -495,9 +524,11 @@ class Level2:
                 self.current_character = "persimmona"
             elif self.current_line_index >= 4:
                 self.current_character = "blueberry"
-            screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
+            screen.blit(self.characters[self.current_character]["image"],
+                        self.characters[self.current_character]["rect"])
         else:
-            screen.blit(self.characters[self.current_character]["image"], self.characters[self.current_character]["rect"])
+            screen.blit(self.characters[self.current_character]["image"],
+                        self.characters[self.current_character]["rect"])
 
         if self.current_scene == "electrical_room":
             for item, data in self.electrical_items.items():
@@ -511,28 +542,38 @@ class Level2:
                     self.open_button["shaking"] = False
                     self.open_button["rect"].x = self.screen_width // 2 - 100
                 else:
-                    self.open_button["rect"].x = (self.screen_width // 2 - 100) + (5 if (current_time // 50) % 2 == 0 else -5)
+                    self.open_button["rect"].x = (self.screen_width // 2 - 100) + (
+                        5 if (current_time // 50) % 2 == 0 else -5)
 
     def is_completed(self):
         return self.completed
 
     def intro_scene(self, screen):
-        pygame.draw.rect(screen, COLORS["INTRO_L2_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
+        pygame.draw.rect(screen, COLORS["INTRO_L2_BG"],
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"], center=True)
 
     def outro_scene(self, screen):
-        pygame.draw.rect(screen, COLORS["OUTRO_L2_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"], center=True)
+        pygame.draw.rect(screen, COLORS["OUTRO_L2_BG"],
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"], center=True)
 
     def basement_search_scene(self, screen):
-        pygame.draw.rect(screen, COLORS["BASEMENT_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+        pygame.draw.rect(screen, COLORS["BASEMENT_BG"],
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"])
 
-    def update_blueberry_dialogue(self, item):
-        if item == "notebook" and self.footprint_task.is_completed():
+    def update_blueberry_dialogue(self):
+        if self.footprint_task.is_completed():
             self.blueberry_dialogue = "Зарисовала оба следа. Надо проверить остальной дом."
             self.blueberry_dialogue_state = "done"
             self.scene_finished = True
@@ -542,9 +583,9 @@ class Level2:
         start_text_animation(self, self.blueberry_dialogue)
 
     def update_electrical_dialogue(self):
-        current_combination = [self.electrical_items[f"switch{i+1}"]["state"] for i in range(5)]
+        current_combination = [self.electrical_items[f"switch{i + 1}"]["state"] for i in range(5)]
         self.attempts_left -= 1
-        
+
         if current_combination == self.correct_combination:
             self.electrical_dialogue = "Точно! Дверь открыта, свет горит!"
             self.electrical_dialogue_state = "done"
@@ -562,7 +603,7 @@ class Level2:
             self.lights_off = True
             self.open_button["shaking"] = True
             self.open_button["shake_time"] = pygame.time.get_ticks()
-        
+
         start_text_animation(self, self.electrical_dialogue)
 
     def update_pineapple_dialogue(self, item):
@@ -582,16 +623,18 @@ class Level2:
         start_text_animation(self, self.pineapple_dialogue)
 
     def blueberry_room_scene(self, screen):
-        pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
-        
+        pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"],
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+
         if self.footprint_task.waiting_for_click:
-            render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+            render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                        self.text_max_width, COLORS["WHITE"])
         else:
             self.footprint_task.run(screen)
-            if not self.scene_finished:
-                for item, data in self.blueberry_items.items():
-                    pygame.draw.rect(screen, COLORS["GRAY"] if data["clicked"] else COLORS["WHITE"], data["rect"])
+            if self.footprint_task.is_completed() and not self.scene_finished:
+                self.update_blueberry_dialogue()
 
     def electrical_room_scene(self, screen):
         screen.fill(COLORS["GRAY"])
@@ -612,13 +655,13 @@ class Level2:
                 rect = data["rect"]
                 pygame.draw.rect(screen, COLORS["DARK_GRAY"], rect)
                 pygame.draw.rect(screen, COLORS["BLACK"], rect, 3)
-                
+
                 handle_width = rect.width // 2
                 handle_height = rect.height // 3
                 handle_x = rect.x + (rect.width - handle_width) // 2
                 top_pos = rect.y + 10
                 bottom_pos = rect.y + rect.height - handle_height - 10
-                
+
                 if data["animating"]:
                     progress = data["anim_progress"] / 100
                     if data["state"]:
@@ -627,7 +670,7 @@ class Level2:
                         handle_y = top_pos + (bottom_pos - top_pos) * progress
                 else:
                     handle_y = top_pos if data["state"] else bottom_pos
-                
+
                 handle_color = COLORS["GREEN"] if data["state"] else COLORS["RED"]
                 pygame.draw.rect(screen, handle_color, (handle_x, handle_y, handle_width, handle_height))
                 pygame.draw.rect(screen, COLORS["BLACK"], (handle_x, handle_y, handle_width, handle_height), 2)
@@ -638,10 +681,12 @@ class Level2:
             button_text = self.font.render("Открыть", True, COLORS["WHITE"])
             screen.blit(button_text, button_text.get_rect(center=button_rect.center))
 
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"])
 
-        attempts_text = f"Попытки: {self.attempts_left}/6"
+        attempts_text = f"Попытки: {self.attempts_left}/5"
         attempts_surface = self.hint_font.render(attempts_text, True, COLORS["WHITE"])
         attempts_rect = attempts_surface.get_rect(topright=(self.screen_width - 20, 20))
         pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], attempts_rect.inflate(20, 10), border_radius=8)
@@ -649,9 +694,12 @@ class Level2:
         screen.blit(attempts_surface, attempts_rect)
 
     def pineapple_room_scene(self, screen):
-        pygame.draw.rect(screen, COLORS["PINEAPPLE_BG"], (0, 0, self.screen_width, self.screen_height - self.text_area_height))
-        pygame.draw.rect(screen, COLORS["BLACK"], (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
+        pygame.draw.rect(screen, COLORS["PINEAPPLE_BG"],
+                         (0, 0, self.screen_width, self.screen_height - self.text_area_height))
+        pygame.draw.rect(screen, COLORS["BLACK"],
+                         (0, self.screen_height - self.text_area_height, self.screen_width, self.text_area_height))
         if not self.scene_finished:
             for item, data in self.pineapple_items.items():
                 pygame.draw.rect(screen, COLORS["GREEN"] if not data["clicked"] else COLORS["GRAY"], data["rect"])
-        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50, self.text_max_width, COLORS["WHITE"])
+        render_text(screen, self.current_text, self.font, self.screen_height - self.text_area_height + 50,
+                    self.text_max_width, COLORS["WHITE"])
