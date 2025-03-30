@@ -343,6 +343,12 @@ class Level2:
             "Где-то должны быть рубильники.",
             "Я нашёл их!"
         ]
+        self.after_electrical_text = [
+            "Мы открыли дверь! Теперь можно проверить комнату.",
+            "Постойте… Где золотой ананас? Он был здесь!",
+            "Смотрите, окно разбито! Вор, должно быть, унёс его через него.",
+            "Надо осмотреть комнату внимательнее."
+        ]
         self.current_line_index = 0
         start_text_animation(self, self.intro_text[self.current_line_index])
         self.text_area_height = TEXT_AREA_HEIGHT
@@ -411,6 +417,7 @@ class Level2:
         self.animation_speed = 10
         self.shake_duration = 500
         self.attempts_left = 5
+        self.after_electrical_dialogue_index = 0
 
         self.pineapple_items = {
             "glass_shards": {"rect": pygame.Rect(200, 150, 100, 50), "clicked": False},
@@ -426,7 +433,7 @@ class Level2:
             item["state"] = False
             item["animating"] = False
             item["anim_progress"] = 0
-        self.electrical_dialogue = "Комбинация сброшена! У тебя снова 6 попыток."
+        self.electrical_dialogue = "Комбинация сброшена! У тебя снова 5 попыток."
         start_text_animation(self, self.electrical_dialogue)
 
     def handle_event(self, event):
@@ -460,6 +467,18 @@ class Level2:
                     self.current_scene = "electrical_room"
                     self.current_character = "corn"
                     start_text_animation(self, self.electrical_dialogue)
+            elif self.current_scene == "electrical_room" and self.door_unlocked and not self.scene_finished:
+                self.after_electrical_dialogue_index += 1
+                if self.after_electrical_dialogue_index < len(self.after_electrical_text):
+                    start_text_animation(self, self.after_electrical_text[self.after_electrical_dialogue_index])
+                    if self.after_electrical_dialogue_index == 1:
+                        self.current_character = "blueberry"
+                    elif self.after_electrical_dialogue_index == 2:
+                        self.current_character = "persimmona"
+                    else:
+                        self.current_character = "corn"
+                else:
+                    self.scene_finished = True
             elif self.scene_finished:
                 if self.current_scene == "blueberry_room":
                     self.current_scene = "basement_search"
@@ -483,7 +502,7 @@ class Level2:
                     return
                 if self.footprint_task.is_completed():
                     self.update_blueberry_dialogue()
-            elif self.current_scene == "electrical_room":
+            elif self.current_scene == "electrical_room" and not self.door_unlocked:
                 for item, data in self.electrical_items.items():
                     if data["rect"].collidepoint(pos) and not data["animating"]:
                         data["state"] = not data["state"]
@@ -590,8 +609,10 @@ class Level2:
             self.electrical_dialogue = "Точно! Дверь открыта, свет горит!"
             self.electrical_dialogue_state = "done"
             self.door_unlocked = True
-            self.scene_finished = True
             self.lights_off = False
+            self.after_electrical_dialogue_index = 0
+            start_text_animation(self, self.after_electrical_text[self.after_electrical_dialogue_index])
+            self.current_character = "corn"
         else:
             correct_count = sum(1 for i in range(5) if current_combination[i] == self.correct_combination[i])
             if self.attempts_left > 0:
@@ -604,7 +625,7 @@ class Level2:
             self.open_button["shaking"] = True
             self.open_button["shake_time"] = pygame.time.get_ticks()
 
-        start_text_animation(self, self.electrical_dialogue)
+            start_text_animation(self, self.electrical_dialogue)
 
     def update_pineapple_dialogue(self, item):
         if item == "glass_shards":
@@ -650,7 +671,7 @@ class Level2:
         overlay.fill((0, 0, 0, 150 if self.lights_off else 0))
         screen.blit(overlay, (0, 0))
 
-        if not self.scene_finished:
+        if not self.door_unlocked:
             for item, data in self.electrical_items.items():
                 rect = data["rect"]
                 pygame.draw.rect(screen, COLORS["DARK_GRAY"], rect)
