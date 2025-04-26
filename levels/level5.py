@@ -1,5 +1,4 @@
 import pygame
-import sys
 import random
 
 # === Размеры и всякие приколы ===
@@ -9,7 +8,7 @@ CIRCLE_RADIUS_RATIO = 3  # Отношение радиуса круга к ра�
 CIRCLE_WIDTH = 4
 CROSS_SIZE_RATIO = 3  # Отношение размера креста к размеру ячейки
 CROSS_WIDTH = 4
-BG_COLOR = (255, 255, 255)
+BG_COLOR = (199, 252, 236)
 LINE_COLOR = (0, 0, 0)
 CIRCLE_COLOR = (0, 128, 255)
 CROSS_COLOR = (255, 0, 0)
@@ -53,20 +52,31 @@ class Level5:  # Крестики нолики
         self.board_height = self.cell_size * GRID_SIZE
         self.x_offset = (self.screen_width - self.board_width) // 2
         self.y_offset = (self.screen_height - self.board_height) // 2
+        self.persimmona_image = pygame.image.load("assets/images/persimmona.png").convert_alpha()
+        reference_width, reference_height = 1920, 1080
+        width_scale = self.screen_width / reference_width
+        height_scale = self.screen_height / reference_height
+        scale_factor = min(width_scale, height_scale)
+        target_persimmona_width, target_persimmona_height = 316, 606
+        new_persimmona_width = max(int(target_persimmona_width * scale_factor), 50)
+        new_persimmona_height = max(int(target_persimmona_height * scale_factor), 96)
+        self.persimmona_image = pygame.transform.scale(self.persimmona_image,
+                                                       (new_persimmona_width, new_persimmona_height))
+        self.persimmona_rect = pygame.Rect(self.screen_width - new_persimmona_width,
+                                           self.screen_height - new_persimmona_height, new_persimmona_width,
+                                           new_persimmona_height)
+        self.persimmona_text_max_width = self.screen_width - new_persimmona_width - 60
 
     def run(self, screen):
         """Основная функция для отрисовки Level5."""
         screen.fill(BG_COLOR)  # Очищаем экран
-
         if not self.game_started and not self.show_puzzle and not self.puzzle_solved:
             self.display_next_sentence(screen)  # Показываем диалог
         elif self.game_over and self.winner == "Вы" and self.post_win_dialog_index < len(
                 self.show_post_win_dialog()) and not self.show_puzzle:  # Рисует пока есть реплики
             self.draw_dialog(screen, self.show_post_win_dialog, "post_win_dialog_index")
-
         elif self.puzzle_solved and self.final_dialog_index < len(self.show_final_dialog()):
             self.draw_dialog(screen, self.show_final_dialog, "final_dialog_index")
-
         elif self.show_puzzle and not self.puzzle_solved:  # Рисуем nextpuzzle
             self.draw_puzzle(screen, self.next_puzzle)
         else:
@@ -79,7 +89,6 @@ class Level5:  # Крестики нолики
         """Обрабатывает события Pygame."""
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.completed = True
-            
         if not self.game_started and not self.show_puzzle and not self.puzzle_solved:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.dialog_index < len(self.show_dialog()) - 1:
@@ -306,6 +315,7 @@ class Level5:  # Крестики нолики
                 text_rect.topleft = (0, current_y)  # Было position[0]
             screen.blit(text_surface, text_rect)
             current_y += text_surface.get_height()
+        screen.blit(self.persimmona_image, self.persimmona_rect)
 
     def display_dialog_sentence(self, screen, sentence, y_position):
         """Отображает предложение диалога в заданной позиции."""
@@ -325,14 +335,14 @@ class Level5:  # Крестики нолики
             if len(lines) > 3:
                 # Отображаем обычный диалог (все строки, кроме последних трех) внизу
                 normal_dialog = '\n'.join(lines[:-3])
-                self.display_dialog_sentence(screen, normal_dialog, self.screen_height - 80)
+                self.display_dialog_sentence(screen, normal_dialog, self.screen_height - 600)
 
                 # Отображаем красный текст (последние три строки) в центре
                 red_text = '\n'.join(lines[-3:])
                 self.display_red_text_center(screen, red_text)
             else:
                 # Если нет красного текста, отображаем весь диалог внизу
-                self.display_dialog_sentence(screen, sentence, self.screen_height - 80)
+                self.display_dialog_sentence(screen, sentence, self.screen_height - 600)
         pygame.display.flip()
 
     def reset_game(self):
@@ -453,8 +463,9 @@ class Level5:  # Крестики нолики
             "Стой, что это был за звук? (П)",
             "Ключи от коробки упали, теперь мы наконец узнаём, что же в ней находится! (К)",
             "Момент истины... (П)",
-            "*звук открывания*", "*в коробке лежал нож с рыбьей чешуёй",
-            "Эх, обожаю свою работу! (П)"
+            "*звук открывания*", "*в коробке лежало очень много мяса и рыбья чешуя",
+            "Похоже, что наш вор не успел замести все свои следы до конца. (П)",
+            "Чешуя - важная зацепка в нашем деле! (П)", "Что ж, пора отправляться в порт... (П)"
         ]
 
     def draw_dialog(self, screen, dialog_function, dialog_index_name):
@@ -469,14 +480,14 @@ class Level5:  # Крестики нолики
             if len(lines) > 3:
                 # Отображаем обычный диалог (все строки, кроме последних трех) внизу
                 normal_dialog = '\n'.join(lines[:-3])
-                self.display_dialog_sentence(screen, normal_dialog, self.screen_height - 80)
+                self.display_dialog_sentence(screen, normal_dialog, self.screen_height - 600)
 
                 # Отображаем красный текст (последние три строки) в центре
                 red_text = '\n'.join(lines[-3:])
                 self.display_red_text_center(screen, red_text)
             else:
                 # Если нет красного текста, отображаем весь диалог внизу
-                self.display_dialog_sentence(screen, sentence, self.screen_height - 80)
+                self.display_dialog_sentence(screen, sentence, self.screen_height - 600)
             pygame.display.flip()
 
 class NextPuzzle:
