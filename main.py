@@ -15,7 +15,6 @@ COLORS = {
     'end_bg': (20, 10, 30), 'end_star': (255, 200, 100), 'end_title': (255, 200, 100), 'end_shadow': (100, 50, 0)
 }
 
-
 class MenuBase:
     def __init__(self, width: int, height: int, title_text: str, is_main_menu: bool = True):
         self.width = width
@@ -97,7 +96,6 @@ class MenuBase:
             self.selected = next((i for i, rect in enumerate(self.bg_rects) if rect.collidepoint(event.pos)), -1)
         return None
 
-
 class MainMenu(MenuBase):
     def __init__(self, width: int, height: int):
         super().__init__(width, height, "Persimmona's Investigation", True)
@@ -120,7 +118,6 @@ class MainMenu(MenuBase):
                     return result
             pygame.display.flip()
             clock.tick(60)
-
 
 class EndScreen(MenuBase):
     def __init__(self, width: int, height: int):
@@ -147,32 +144,40 @@ class EndScreen(MenuBase):
             pygame.display.flip()
             clock.tick(60)
 
-
 def main():
     info = pygame.display.Info()
     screen = pygame.display.set_mode((info.current_w, info.current_h), pygame.FULLSCREEN)
     pygame.display.set_caption("Persimmona's Investigation")
+    
+    try:
+        icon = pygame.image.load('assets/images/logo.png')
+        pygame.display.set_icon(icon)
+    except pygame.error as e:
+        print(f"Warning: Could not load icon 'assets/images/logo.png': {e}")
+
     clock = pygame.time.Clock()
     while True:
-        if MainMenu(*screen.get_size()).run(screen) == "quit":
+        main_menu = MainMenu(*screen.get_size())
+        result = main_menu.run(screen)
+        if result == "quit":
             break
-        levels = [Prologue(*screen.get_size()), Level1(*screen.get_size()), Level2(*screen.get_size()),
-                  Level3(), Level4(), Level5(*screen.get_size()), Level6(), Epilogue(*screen.get_size())]
-        for level in levels:
-            while not level.is_completed():
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        return
-                    level.handle_event(event)
-                screen.fill(COLORS['end_bg'])
-                level.run(screen)
-                pygame.display.flip()
-                clock.tick(60)
-        if EndScreen(*screen.get_size()).run(screen) == "quit":
-            break
+        elif result == "start":
+            levels = [Prologue(*screen.get_size()), Level1(*screen.get_size()), Level2(*screen.get_size()),
+                      Level3(*screen.get_size()), Level4(), Level5(*screen.get_size()), Level6(), Epilogue(*screen.get_size())]
+            for level in levels:
+                while not level.is_completed():
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            return
+                        level.handle_event(event)
+                    screen.fill(COLORS['end_bg'])
+                    level.run(screen)
+                    pygame.display.flip()
+                    clock.tick(60)
+            if EndScreen(*screen.get_size()).run(screen) == "quit":
+                break
     pygame.quit()
-
 
 if __name__ == "__main__":
     main()
