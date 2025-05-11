@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="https://github.com/bereznyak72/Persimmona-s-investigation/blob/main/assets/images/logo.png?raw=true" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detective game 'Persimmona's Investigation' - detective adventure game with puzzle and exploration elements">
+    <meta name="keywords" content="детективная игра, расследование Персиммоны, золотой ананас, головоломки, квест, приключения, русская игра, detective game, persimmona's investigation, golden pineapple, puzzles, adventure, russian game">
+    <meta name="author" content="Persimmona's Investigation Team">
+    <meta property="og:title" content="Persimmona's Investigation">
+    <meta property="og:description" content="Detective game 'Persimmona's Investigation' - detective adventure game with puzzle and exploration elements">
+    <meta property="og:image" content="https://github.com/bereznyak72/Persimmona-s-investigation/blob/main/assets/images/logo.png?raw=true">
+    <!-- <meta property="og:url" content=""> -->
+    <meta property="og:type" content="website">
+    <title>Расследование Персиммоны | Persimmona's Investigation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar fixed top-0 w-full z-50 bg-transparent">
+        <div class="navbar-container">
+            <h1 class="navbar-logo text-white" id="hero-title">Расследование Персиммоны</h1>
+            <div class="navbar-menu">
+                <a href="https://forms.gle/JPuPD52krNhtMdGq9" target="_blank" class="text-blue-300 hover:underline" id="support-link">Обратная связь</a>
+                <button class="language-switcher text-white border border-white px-2 py-1 rounded" id="languageSwitcher">
+                    <span>RU</span>
+                </button>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="mobile-menu" id="mobile-menu">
+                <a href="https://forms.gle/JPuPD52krNhtMdGq9" target="_blank" class="text-blue-300" id="mobile-support-link">Обратная связь</a>
+                <button class="language-switcher text-white border border-white px-2 py-1 rounded" id="mobile-languageSwitcher">
+                    <span>RU</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section id="home" class="h-screen flex items-center justify-center bg-[#1e3a8a]">
+        <div class="text-center fade-in">
+            <h1 class="text-5xl md:text-7xl font-bold mb-4" id="hero-title2">Расследование Персиммоны</h1>
+            <p class="text-xl md:text-2xl mb-6" id="hero-subtitle">Детективная приключенческая игра с элементами головоломок и исследования</p>
+            <p class="text-lg mb-6" id="release-date">Планируемая дата релиза: конец апреля 2025 года</p>
+            <button id="cta" class="cta bg-blue-600 text-white px-6 py-3 rounded-lg transition-all">Скачать сейчас</button>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-gray-800 slide-in">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10" id="about-title">Об игре</h2>
+            <div class="max-w-3xl mx-auto text-lg bg-gray-700 p-8 rounded-lg shadow-lg">
+                <p id="about-text">"Расследование Персиммоны" — это захватывающая детективная игра, в которой вы играете за Персиммону, талантливую сыщицу, и её помощника Кукурузу. Раскройте тайну золотого ананаса, собирая улики, решая головоломки и исследуя локации от уютных домов до загадочных ферм.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="characters" class="py-20 bg-gray-900 slide-in">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10" id="characters-title">Персонажи</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div class="character-card bg-gray-800 p-6 rounded-lg text-center">
+                    <div class="character-img-container mx-auto mb-4">
+                        <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/persimmona.png" alt="Персиммона">
+                    </div>
+                    <h3 class="text-xl font-bold" id="persimmona">Персиммона</h3>
+                    <p id="persimmona-desc">Остроумный детектив с нюхом на неприятности.</p>
+                </div>
+                <div class="character-card bg-gray-800 p-6 rounded-lg text-center">
+                    <div class="character-img-container mx-auto mb-4">
+                        <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/blueberry.png" alt="Голубика">
+                    </div>
+                    <h3 class="text-xl font-bold" id="blueberry">Голубика</h3>
+                    <p id="blueberry-desc">Элегантная дама, у которой украли золотой ананас.</p>
+                </div>
+                <div class="character-card bg-gray-800 p-6 rounded-lg text-center">
+                    <div class="character-img-container mx-auto mb-4">
+                        <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/corn.png" alt="Кукуруза">
+                    </div>
+                    <h3 class="text-xl font-bold" id="corn">Кукуруза</h3>
+                    <p id="corn-desc">Весёлый и технически подкованный помощник Персиммоны.</p>
+                </div>
+                <div class="character-card bg-gray-800 p-6 rounded-lg text-center">
+                    <div class="character-img-container mx-auto mb-4">
+                        <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/cucumber.png" alt="Огурец">
+                    </div>
+                    <h3 class="text-xl font-bold" id="cucumber">Огурец</h3>
+                    <p id="cucumber-desc">Опытный пекарь, пострадавший от кражи продукции.</p>
+                </div>
+                <div class="character-card bg-gray-800 p-6 rounded-lg text-center">
+                    <div class="character-img-container mx-auto mb-4">
+                        <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/eggplant.png" alt="Баклажан">
+                    </div>
+                    <h3 class="text-xl font-bold" id="eggplant">Баклажан</h3>
+                    <p id="eggplant-desc">Нелепый охранник, охранявший булочную.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-20 bg-gray-800 slide-in">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10" id="features-title">Особенности игры</h2>
+            <div class="features-grid grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-gray-700 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-2" id="feature1-title">Увлекательный сюжет</h3>
+                    <p id="feature1-text">Погрузитесь в историю, полную тайн и неожиданных поворотов. Каждая глава раскрывает новые загадки.</p>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-2" id="feature2-title">Исследование</h3>
+                    <p id="feature2-text">Исследуйте локации, такие как булочная, ферма и порт, чтобы найти ключи к разгадке.</p>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-2" id="feature3-title">Головоломки</h3>
+                    <p id="feature3-text">Решайте задачи, используя инструменты вроде нюхача и блокнота для зарисовок.</p>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-2" id="feature4-title">Яркие персонажи</h3>
+                    <p id="feature4-text">Встречайте уникальных героев, от элегантной Голубики до эксцентричной Капусты.</p>
+                </div>
+                <div class="bg-gray-700 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-2" id="feature5-title">Атмосфера</h3>
+                    <p id="feature5-text">Наслаждайтесь сочетанием детектива, юмора и загадочности.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-20 bg-gray-900 slide-in">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-10" id="gallery-title">Галерея</h2>
+            <div class="screenshot-gallery" id="screenshot-gallery">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/basement_bg.jpg" alt="Basement Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/blueberry_footprints_bg.jpg" alt="Footprints Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/interview_background.jpg" alt="Interview Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/electrical_bg.jpg" alt="Electrical Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/intro_bg.jpg" alt="Intro 2 Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/bakery_room.jpg" alt="Bakery Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/intro_bg_3.jpg" alt="Intro 3 Scene" loading="lazy">
+                <img src="https://github.com/bereznyak72/Persimona-s-investigation/raw/main/assets/images/outro_bg_3.jpg" alt="Outro Scene" loading="lazy">
+            </div>
+            <div class="gallery-controls">
+                <button id="scroll-left" class="scroll-button">← Влево</button>
+                <button id="scroll-right" class="scroll-button">Вправо →</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 bg-gray-900 text-center">
+        <div class="container mx-auto px-4">
+            <div class="mb-4">
+                <a href="#" class="text-blue-300 hover:underline mx-2" id="dev-link">Сайт разработчика</a> |
+                <a href="https://github.com/bereznyak72/Persimona-s-investigation" target="_blank" class="text-blue-300 hover:underline mx-2" id="code-link">Исходный код</a>
+            </div>
+            <p id="copyright">© 2025 Все права защищены.</p>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="modal-close">×</span>
+            <img id="modal-image" src="" alt="Enlarged Image">
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            ru: {
+                "hero-title": "Расследование Персиммоны",
+                "hero-title2": "Расследование Персиммоны",
+                "hero-subtitle": "Детективная приключенческая игра с элементами головоломок и исследования",
+                "release-date": "Планируемая дата релиза: конец апреля 2025 года",
+                "cta": "Скачать сейчас",
+                "about-title": "Об игре",
+                "about-text": "\"Расследование Персиммоны\" — это захватывающая детективная игра, в которой вы играете за Персиммону, талантливую сыщицу, и её помощника Кукурузу. Раскройте тайну золотого ананаса, собирая улики, решая головоломки и исследуя локации от уютных домов до загадочных ферм.",
+                "characters-title": "Персонажи",
+                "persimmona": "Персиммона",
+                "blueberry": "Голубика",
+                "corn": "Кукуруза",
+                "cucumber": "Огурец",
+                "cabbage": "Капуста",
+                "lemon": "Лимон",
+                "eggplant": "Баклажан",
+                "persimmona-desc": "Остроумный детектив с нюхом на неприятности.",
+                "blueberry-desc": "Элегантная дама, у которой украли золотой ананас.",
+                "corn-desc": "Весёлый и технически подкованный помощник Персиммоны.",
+                "cucumber-desc": "Опытный пекарь, пострадавший от кражи продукции.",
+                "cabbage-desc": "Эксцентричная хозяйка фермы, известная мясными деликатесами.",
+                "lemon-desc": "Полицейский, помогающий поймать вора.",
+                "eggplant-desc": "Нелепый охранник, охранявший булочную.",
+                "features-title": "Особенности игры",
+                "feature1-title": "Увлекательный сюжет",
+                "feature1-text": "Погрузитесь в историю, полную тайн и неожиданных поворотов. Каждая глава раскрывает новые загадки.",
+                "feature2-title": "Исследование",
+                "feature2-text": "Исследуйте локации, такие как булочная, ферма и порт, чтобы найти ключи к разгадке.",
+                "feature3-title": "Головоломки",
+                "feature3-text": "Решайте задачи, используя инструменты вроде нюхача и блокнота для зарисовок.",
+                "feature4-title": "Яркие персонажи",
+                "feature4-text": "Встречайте уникальных героев, от элегантной Голубики до эксцентричной Капусты.",
+                "feature5-title": "Атмосфера",
+                "feature5-text": "Наслаждайтесь сочетанием детектива, юмора и загадочности.",
+                "gallery-title": "Галерея",
+                "dev-link": "Сайт разработчика",
+                "code-link": "Исходный код",
+                "support-link": "Обратная связь",
+                "copyright": "© 2025 Все права защищены."
+            },
+            en: {
+                "hero-title": "Persimmona's Investigation",
+                "hero-title2": "Persimmona's Investigation",
+                "hero-subtitle": "A detective adventure game with puzzles and exploration",
+                "release-date": "Planned release date: End of April 2025",
+                "cta": "Download Now",
+                "about-title": "About the Game",
+                "about-text": "\"Persimmona's Investigation\" is a thrilling detective game where you play as Persimmona, a skilled detective, and her assistant Corn. Uncover the mystery of the golden pineapple by collecting clues, solving puzzles, and exploring locations from cozy homes to mysterious farms.",
+                "characters-title": "Characters",
+                "persimmona": "Persimmona",
+                "blueberry": "Blueberry",
+                "corn": "Corn",
+                "cucumber": "Cucumber",
+                "cabbage": "Cabbage",
+                "lemon": "Lemon",
+                "eggplant": "Eggplant",
+                "persimmona-desc": "A witty detective with a nose for trouble.",
+                "blueberry-desc": "An elegant lady whose golden pineapple was stolen.",
+                "corn-desc": "Persimmona's cheerful and tech-savvy assistant.",
+                "cucumber-desc": "An experienced baker who lost his produce to theft.",
+                "cabbage-desc": "An eccentric farm owner known for her meat delicacies.",
+                "lemon-desc": "A police officer aiding in catching the thief.",
+                "eggplant-desc": "The ridiculous security guard guarding the bakery",
+                "features-title": "Game Features",
+                "feature1-title": "Engaging Story",
+                "feature1-text": "Dive into a story full of mysteries and unexpected twists. Each chapter unveils new puzzles.",
+                "feature2-title": "Exploration",
+                "feature2-text": "Explore locations like a bakery, farm, and port to find clues.",
+                "feature3-title": "Puzzles",
+                "feature3-text": "Solve challenges using tools like the sniffer and sketchbook.",
+                "feature4-title": "Vivid Characters",
+                "feature4-text": "Meet unique characters, from elegant Blueberry to eccentric Cabbage.",
+                "feature5-title": "Atmosphere",
+                "feature5-text": "Enjoy a blend of detective, humor, and mystery.",
+                "gallery-title": "Gallery",
+                "dev-link": "Developer's Site",
+                "code-link": "Source Code",
+                "support-link": "Support",
+                "copyright": "© 2025 All Rights Reserved."
+            }
+        };
+
+        const savedLang = localStorage.getItem('siteLanguage');
+        const userLanguage = navigator.language || navigator.userLanguage;
+        const isRussian = userLanguage.startsWith('ru');
+        let currentLang = savedLang || (isRussian ? 'ru' : 'en');
+
+        const languageSwitcher = document.getElementById('languageSwitcher');
+        const mobileLanguageSwitcher = document.getElementById('mobile-languageSwitcher');
+        const languageText = languageSwitcher.querySelector('span');
+        const mobileLanguageText = mobileLanguageSwitcher.querySelector('span');
+
+        document.getElementById('cta').addEventListener('click', function() {
+            alert(currentLang === 'ru' ? 'Функция скачивания будет реализована позже' : 'Download feature will be implemented later');
+        });
+
+        function animateLanguageChange() {
+            document.querySelectorAll('section, footer').forEach(el => {
+                el.classList.add('fade-out');
+            });
+
+            setTimeout(() => {
+                setLanguage(currentLang);
+                document.querySelectorAll('section, footer').forEach(el => {
+                    el.classList.remove('fade-out');
+                    el.classList.add('fade-in');
+                });
+                setTimeout(() => {
+                    document.querySelectorAll('section, footer').forEach(el => {
+                        el.classList.remove('fade-in');
+                    });
+                }, 500);
+            }, 500);
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            animateLanguageChange();
+            localStorage.setItem('siteLanguage', currentLang);
+        }
+
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            languageText.textContent = lang.toUpperCase();
+            mobileLanguageText.textContent = lang.toUpperCase();
+            for (const [key, value] of Object.entries(translations[lang])) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = value;
+                }
+                const mobileElement = document.getElementById('mobile-' + key);
+                if (mobileElement) {
+                    mobileElement.textContent = value;
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+            document.querySelectorAll('section, footer').forEach(el => {
+                el.classList.add('fade-in');
+            });
+            setTimeout(() => {
+                document.querySelectorAll('section, footer').forEach(el => {
+                    el.classList.remove('fade-in');
+                });
+            }, 500);
+
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+            });
+
+            window.addEventListener('scroll', () => {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            const gallery = document.getElementById('screenshot-gallery');
+            const scrollLeftBtn = document.getElementById('scroll-left');
+            const scrollRightBtn = document.getElementById('scroll-right');
+            let autoScrollInterval;
+
+            function updateButtonState() {
+                scrollLeftBtn.disabled = gallery.scrollLeft <= 0;
+                scrollRightBtn.disabled = gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth - 10;
+            }
+
+            function scrollToImage(index) {
+                const images = gallery.querySelectorAll('img');
+                if (index >= images.length) {
+                    index = 0;
+                } else if (index < 0) {
+                    index = images.length - 1;
+                }
+                const image = images[index];
+                const offsetLeft = image.offsetLeft - (gallery.clientWidth - image.clientWidth) / 2;
+                gallery.scrollTo({ left: offsetLeft, behavior: 'smooth' });
+                return index;
+            }
+
+            function startAutoScroll() {
+                let currentIndex = 0;
+                autoScrollInterval = setInterval(() => {
+                    currentIndex = scrollToImage(currentIndex + 1);
+                    updateButtonState();
+                }, 8000);
+            }
+
+            function stopAutoScroll() {
+                clearInterval(autoScrollInterval);
+            }
+
+            scrollLeftBtn.addEventListener('click', () => {
+                const currentIndex = Array.from(gallery.querySelectorAll('img')).findIndex(img => img.offsetLeft >= gallery.scrollLeft);
+                scrollToImage(currentIndex - 1);
+                setTimeout(updateButtonState, 300);
+            });
+
+            scrollRightBtn.addEventListener('click', () => {
+                const currentIndex = Array.from(gallery.querySelectorAll('img')).findIndex(img => img.offsetLeft >= gallery.scrollLeft);
+                scrollToImage(currentIndex + 1);
+                setTimeout(updateButtonState, 300);
+            });
+
+            gallery.addEventListener('scroll', updateButtonState);
+            gallery.addEventListener('mouseenter', stopAutoScroll);
+            gallery.addEventListener('mouseleave', () => {
+                setTimeout(startAutoScroll, 8000);
+            });
+            gallery.addEventListener('touchstart', stopAutoScroll);
+            gallery.addEventListener('touchend', () => {
+                setTimeout(startAutoScroll, 8000);
+            });
+
+            startAutoScroll();
+            updateButtonState();
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+            gallery.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            gallery.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                const currentIndex = Array.from(gallery.querySelectorAll('img')).findIndex(img => img.offsetLeft >= gallery.scrollLeft);
+                if (diff > 50) {
+                    scrollToImage(currentIndex + 1);
+                } else if (diff < -50) {
+                    scrollToImage(currentIndex - 1);
+                }
+            });
+
+            const modal = document.getElementById('modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalClose = document.querySelector('.modal-close');
+            const galleryImages = gallery.querySelectorAll('img');
+
+            galleryImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    modalImage.src = img.src;
+                    modalImage.alt = img.alt;
+                    modal.classList.add('show');
+                    modal.classList.remove('hidden');
+                    stopAutoScroll();
+                });
+            });
+
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('show');
+                modal.classList.add('hidden');
+                setTimeout(startAutoScroll, 8000);
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                    modal.classList.add('hidden');
+                    setTimeout(startAutoScroll, 8000);
+                }
+            });
+        });
+
+        languageSwitcher.addEventListener('click', toggleLanguage);
+        mobileLanguageSwitcher.addEventListener('click', toggleLanguage);
+    </script>
+</body>
+</html>
