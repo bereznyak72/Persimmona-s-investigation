@@ -6,7 +6,8 @@ REFERENCE_HEIGHT = 1080
 CHARACTER_SIZES = {
     "persimmona": (316, 606),
     "corn": (304, 650),
-    "blueberry": (448, 544)
+    "blueberry": (448, 544),
+    "eggplant": (309, 586)
 }
 
 # Цвета
@@ -38,7 +39,8 @@ COLORS = {
 ASSETS = {
     "PERSIMMONA": "assets/images/persimmona.png",
     "CORN": "assets/images/corn.png",
-    "BLUEBERRY": "assets/images/blueberry.png"
+    "BLUEBERRY": "assets/images/blueberry.png",
+    "EGGPLANT": "assets/images/eggplant.png"
 }
 
 # Общие параметры
