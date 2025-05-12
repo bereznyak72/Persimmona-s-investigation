@@ -22,16 +22,16 @@ class Epilogue:
         self.char_index = 0
         self.text_lines = []
         self.persimmona_text = ( # здесь прокол в названиях (диалоги наоборот)
-            "Ну что ж, спасибо, что поделились вашим опытом.",
+            "Well, thank you for sharing your experience.",
         )
         self.persimmona2_text = (
-            "На этом наша передача заканчивается!",
+            "This is the end of our show!",
         )
         self.persimmona3_text = (
-            "До новых встреч! *обращение к телезрителям*"
+            "See you soon!"
         )
         self.presenter_text = (
-            "Вот такая вот история, которую я запомню на всю жизнь!"
+            "That's the story that I'll remember for the rest of my life!"
         )
         self.start_text_animation(self.presenter_text)
         self.text_area_height = 150

@@ -284,14 +284,14 @@ class Level5:  # Крестики нолики
 
     def show_dialog(self):
         return [
-            "Капуста, привет! Слышала, что у тебя пропало мясо. (П)", "Можно я поищу какие-нибудь улики? (П)",
-            "Привет, Персиммона, конечно! (К)", "Я заметила скомканную бумагу на столе, её раньше не было... (К)",
-            "Погоди, на ней что-то написано. (П)", "\"Сыграйте в игры и так уж и быть получите своё мясо\"",
-            "Скорее всего я была на работе, когда кто-то подложил записку... (К)",
-            "Давай сыграем, если это поможет расследованию. (П)",
-            "\n\nЗадача: Победить Капусту в мясных крестиках ноликах 7 на 7."
-            "\nПримечание: Нужно составить линию из 5."
-            "\nВы будете играть за крестики."
+            "Cabbage, hello! I heard that your meat is missing. (P)", "Can I look for some evidence? (P)",
+            "Hello, Persimmon, of course! (C)", "I noticed a crumpled paper on the table, it wasn't there before... (C)",
+            "Wait, there's something written on it. (P)", "\"Play games and you'll get your meat\"",
+            "Most likely I was at work when someone planted a note... (C)",
+            "Let's play if it helps the investigation. (P)",
+            "\nTask: Defeat the Cabbage in meat tic-tac-toe 7 by 7."
+            "\nNote: You need to make a line of 5."
+            "\nYou will play as Tic-tac-toe."
         ]
 
     def display_text(self, screen, text, color, font_path, font_size, position="center", y_offset=0):
@@ -426,19 +426,19 @@ class Level5:  # Крестики нолики
     def show_post_win_dialog(self):
         """Возвращает диалог после победы игрока."""
         return [
-            "Юху поздравляю! (К)",
-            "Ну и что нам это дало? Эх... (П)",
-            "*Персиммона от злости роняет кусок мяса на пол*",
-            "*Она наклоняется, чтобы поднять его*",
-            "Стой! Тут ещё одна записка! (П)",
-            "Серьёзно? Где? (К)",
-            "Она приклеена под столом. Ну-ка... (П)",
-            '"Следующее испытание вас ждёт во улице"',
-            "Ну-у-у, у нас не то чтобы был выбор с тобой...(П)",
-            "Пойдём! (К)", "*спустя некоторое время* (типо губка боб мем, можно кста такое сделать если хотите)",
-            "Я нашла коробку с задней частью для ключа! (К)", "Очень похоже на игру Пятнашки. (П)",
-            "Судя по запискам нашего анонима, мы на правильном пути... (П)",
-            "Приготовься!\n\nЗадача: Собрать все пятнашки.\nПередвигайте плитки, чтобы расположить их по порядку от 1 до 15.\nПустая клетка должна быть в правом нижнем углу."
+            "Congratulations! (C)",
+            "Well, what did it give us? Eh... (P)",
+            "*Persimmon angrily drops a piece of meat on the floor*",
+            "*She bends down to pick it up*",
+            "Stop! There's another note! (P)",
+            "Seriously? Where? (C)",
+            "It's glued under the table. Come on... (P)",
+            '"The next test awaits you outside", '
+            "Well, we don't really have a choice with you...(P)",
+            "Let's go! (C)", "*after a while*",
+            "I found a box with a back for the key! (C)", "It's very similar to a game of Tag. (P)",
+            "Judging by the notes of our anonymous friend, we are on the right track... (P)",
+            "\nGet ready!\nThe task is to collect all the spots.Move the tiles to arrange them in order from 1 to 15.\nThe empty cell should be in the bottom right corner."
         ]
 
     def draw_puzzle(self, screen, puzzle):
@@ -459,13 +459,13 @@ class Level5:  # Крестики нолики
     def show_final_dialog(self):
         """Возвращает финальный диалог после решения NextPuzzle."""
         return [
-            "Получилось! (К)",
-            "Стой, что это был за звук? (П)",
-            "Ключи от коробки упали, теперь мы наконец узнаём, что же в ней находится! (К)",
-            "Момент истины... (П)",
-            "*звук открывания*", "*в коробке лежало очень много мяса и рыбья чешуя",
-            "Похоже, что наш вор не успел замести все свои следы до конца. (П)",
-            "Чешуя - важная зацепка в нашем деле! (П)", "Что ж, пора отправляться в порт... (П)"
+            "It worked! (C)",
+            "Wait, what was that sound? (P)",
+            "The keys to the box fell, now we finally find out what's in it! (C)",
+            "The moment of truth... (P)",
+            "*the sound of opening*", "*there was a lot of meat and fish scales in the box",
+            "It seems that our thief did not have time to cover all his tracks to the end. (P)",
+            "Scales are an important clue in our case! (P)", "Well, it's time to go to the port... (P)"
         ]
 
     def draw_dialog(self, screen, dialog_function, dialog_index_name):
