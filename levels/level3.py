@@ -23,8 +23,8 @@ class SnifferTask:
         self.signal_strength = 0
         self.max_signal = 100
         self.min_signal_distance = 50
-        self.hint_text = "Используй нюхач, чтобы найти место, где лежали заготовки!"
-        self.dynamic_hint = "Начни искать!"
+        self.hint_text = "Use the sniffer to find where the baking supplies were!"
+        self.dynamic_hint = "Start searching!"
         self.last_hint = self.dynamic_hint
         self.result_text = ""
         
@@ -92,13 +92,13 @@ class SnifferTask:
 
         new_hint = self.dynamic_hint
         if self.signal_strength > 80:
-            new_hint = "Ты очень близко!"
+            new_hint = "You're very close!"
         elif self.signal_strength > 50:
-            new_hint = "Ты на верном пути!"
+            new_hint = "You're on the right track!"
         elif self.signal_strength > 20:
-            new_hint = "Слабый сигнал, ищи дальше."
+            new_hint = "Weak signal, keep searching."
         else:
-            new_hint = "Никакого запаха, попробуй другое место."
+            new_hint = "No scent, try another spot."
 
         if new_hint != self.last_hint:
             self.dynamic_hint = new_hint
@@ -106,7 +106,7 @@ class SnifferTask:
             self.start_text_animation(f"{self.hint_text} {self.dynamic_hint}")
 
         if distance < self.min_signal_distance:
-            self.result_text = "Нашёл! Здесь лежали заготовки для выпечки!"
+            self.result_text = "Found it! This is where the baking supplies were!"
             self.completed = True
             self.success_animation = True
             self.success_timer = pygame.time.get_ticks()
@@ -192,7 +192,7 @@ class SnifferTask:
                         (bar_x, bar_y, bar_width * (self.signal_strength / self.max_signal), bar_height), 
                         border_radius=5)
         pygame.draw.rect(screen, COLORS["WHITE"], (bar_x, bar_y, bar_width, bar_height), 2, border_radius=5)
-        signal_text = self.font.render(f"Сигнал: {int(self.signal_strength)}%", True, COLORS["WHITE"])
+        signal_text = self.font.render(f"Signal: {int(self.signal_strength)}%", True, COLORS["WHITE"])
         screen.blit(signal_text, signal_text.get_rect(center=(bar_x + bar_width // 2, bar_y + bar_height // 2)))
 
         if self.success_animation and current_time - self.success_timer < self.success_duration:
@@ -222,21 +222,21 @@ class BreakInTask:
         self.waiting_for_click = True
 
         self.traces = [
-            {"pos": (screen_width // 5, 100), "type": "вентиляция", "color": (100, 100, 255), "detail": "grid", "fake": False},
-            {"pos": (2 * screen_width // 5, 150), "type": "семечки", "color": (255, 200, 100), "detail": "stars", "fake": False},
-            {"pos": (screen_width // 3, 200), "type": "пыль", "color": (200, 200, 200), "detail": "dots", "fake": False},
-            {"pos": (screen_width // 2, 250), "type": "запах", "color": (255, 100, 255), "detail": "waves", "fake": False},
-            {"pos": (3 * screen_width // 5, 300), "type": "царапины", "color": (255, 50, 50), "detail": "sparks", "fake": False},
-            {"pos": (4 * screen_width // 5, 200), "type": "грязь", "color": (139, 69, 19), "detail": "splash", "fake": False},
-            {"pos": (screen_width // 4, 300), "type": "обрывок ткани", "color": (150, 150, 255), "detail": "wave", "fake": False},
-            {"pos": (screen_width // 6, 250), "type": "кофейное пятно", "color": (100, 50, 0), "detail": "stain", "fake": True},
-            {"pos": (3 * screen_width // 4, 150), "type": "перо", "color": (255, 255, 255), "detail": "feather", "fake": True},
-            {"pos": (2 * screen_width // 3, 100), "type": "след воды", "color": (50, 150, 255), "detail": "drop", "fake": True}
+            {"pos": (screen_width // 5, 100), "type": "ventilation", "color": (100, 100, 255), "detail": "grid", "fake": False},
+            {"pos": (2 * screen_width // 5, 150), "type": "seeds", "color": (255, 200, 100), "detail": "stars", "fake": False},
+            {"pos": (screen_width // 3, 200), "type": "dust", "color": (200, 200, 200), "detail": "dots", "fake": False},
+            {"pos": (screen_width // 2, 250), "type": "scent", "color": (255, 100, 255), "detail": "waves", "fake": False},
+            {"pos": (3 * screen_width // 5, 300), "type": "scratches", "color": (255, 50, 50), "detail": "sparks", "fake": False},
+            {"pos": (4 * screen_width // 5, 200), "type": "mud", "color": (139, 69, 19), "detail": "splash", "fake": False},
+            {"pos": (screen_width // 4, 300), "type": "fabric scrap", "color": (150, 150, 255), "detail": "wave", "fake": False},
+            {"pos": (screen_width // 6, 250), "type": "coffee stain", "color": (100, 50, 0), "detail": "stain", "fake": True},
+            {"pos": (3 * screen_width // 4, 150), "type": "feather", "color": (255, 255, 255), "detail": "feather", "fake": True},
+            {"pos": (2 * screen_width // 3, 100), "type": "water trail", "color": (50, 150, 255), "detail": "drop", "fake": True}
         ]
-        self.correct_order = ["вентиляция", "семечки", "пыль", "запах", "царапины", "грязь", "обрывок ткани"]
+        self.correct_order = ["ventilation", "seeds", "dust", "scent", "scratches", "mud", "fabric scrap"]
         self.current_trace = self.traces[0]
         self.connections = []
-        self.hint_text = "Начни с вентиляции и соедини следы в порядке действий вора."
+        self.hint_text = "Start with the ventilation and connect the traces in the order of the thief's actions."
         self.result_text = ""
         
         self.background_color = (139, 69, 19)
@@ -286,22 +286,22 @@ class BreakInTask:
                         self.connections = []
                         self.current_trace = self.traces[0]
                         self.task_timer = pygame.time.get_ticks()
-                        self.start_text_animation(f"Ошибка! {trace['type'].capitalize()} не связан с вором. Начни заново!")
+                        self.start_text_animation(f"Error! {trace['type'].capitalize()} is not related to the thief. Start over!")
                     else:
                         expected_type = self.correct_order[self.correct_order.index(self.current_trace["type"]) + 1]
                         if trace["type"] == expected_type:
                             self.connections.append((self.current_trace, trace))
                             self.current_trace = trace
                             if len(self.connections) == len(self.correct_order) - 1:
-                                self.result_text = "Правильно! Вор проник через вентиляцию!"
+                                self.result_text = "Correct! The thief entered through the ventilation!"
                                 self.completed = True
                                 self.success_animation = True
                                 self.success_timer = pygame.time.get_ticks()
                                 self.start_text_animation(self.result_text)
                             else:
-                                self.start_text_animation(f"Верно! Теперь соедини с {expected_type}.")
+                                self.start_text_animation(f"Correct! Now connect to {expected_type}.")
                         else:
-                            self.start_text_animation(f"Ошибка! Попробуй соединить с {expected_type}.")
+                            self.start_text_animation(f"Error! Try connecting to {expected_type}.")
                     return True
         return False
 
@@ -328,7 +328,7 @@ class BreakInTask:
             self.connections = []
             self.current_trace = self.traces[0]
             self.task_timer = pygame.time.get_ticks()
-            self.start_text_animation("Ты слишком медлишь! Начни заново.")
+            self.start_text_animation("You're too slow! Start over.")
 
         for y in range(self.screen_height - self.text_area_height):
             color = (139 - y // 10, 69 - y // 20, 19 + y // 10)
@@ -425,11 +425,11 @@ class BreakInTask:
         pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, bar_width, bar_height), border_radius=5)
         pygame.draw.rect(screen, (0, 255, 0, 200), (bar_x, bar_y, bar_width * progress, bar_height), border_radius=5)
         pygame.draw.rect(screen, COLORS["WHITE"], (bar_x, bar_y, bar_width, bar_height), 2, border_radius=5)
-        progress_text = self.font.render(f"Соединения: {len(self.connections)}/{len(self.correct_order) - 1}", True, COLORS["WHITE"])
+        progress_text = self.font.render(f"Connections: {len(self.connections)}/{len(self.correct_order) - 1}", True, COLORS["WHITE"])
         screen.blit(progress_text, progress_text.get_rect(center=(bar_x + bar_width // 2, bar_y + bar_height // 2)))
 
         time_left = max(0, (self.time_limit - (current_time - self.task_timer)) // 1000)
-        timer_text = self.font.render(f"Время: {time_left}с", True, COLORS["WHITE"])
+        timer_text = self.font.render(f"Time: {time_left}s", True, COLORS["WHITE"])
         screen.blit(timer_text, (20, 20))
 
         if self.success_animation and current_time - self.success_timer < self.success_duration:
@@ -467,28 +467,28 @@ class Level3:
         self.char_index = 0
         self.text_lines = []
         self.intro_text = [
-            "Персиммона и Кукуруза входят в Булочную.",
-            "Тут пусто, хотя обычно полно народу.",
-            "Ночью нас обчистили! Ящики с заготовками пропали.",
-            "Мы должны найти улики. Это может быть связано с делом Голубики.",
-            "На полу следы, похожие на те, что были у Голубики!",
-            "И тут семечко… Арбузное. Надо проверить всё."
+            "Persimmona and Corn enter the Bakery.",
+            "It’s empty here, though it’s usually bustling.",
+            "We were cleaned out last night! The crates with baking supplies are gone.",
+            "We need to find clues. This might be connected to Blueberry’s case.",
+            "There are traces on the floor, similar to those at Blueberry’s!",
+            "And here’s a seed… A watermelon seed. We need to check everything."
         ]
         self.outro_text = [
-            "Мы нашли путь вора! Это вентиляция.",
-            "Арбузное семечко и следы — это не совпадение.",
-            "Надо навестить Огурца. Он что-то знает.",
-            "Пойдём, Кукуруза, время раскрывать тайны!"
+            "We found the thief’s path! It’s the ventilation.",
+            "The watermelon seed and the traces are no coincidence.",
+            "We need to visit Cucumber. He knows something.",
+            "Let’s go, Corn, it’s time to uncover some secrets!"
         ]
         self.bakery_room_text = [
-            "Надо найти место, где лежали заготовки.",
-            "Используй нюхач, он уловит запах муки и дрожжей!",
-            "Я осмотрю полки, вдруг что ещё найду."
+            "We need to find where the baking supplies were.",
+            "Use the sniffer, it’ll pick up the scent of flour and yeast!",
+            "I’ll check the shelves, maybe I’ll find something else."
         ]
         self.break_in_room_text = [
-            "Теперь выясним, как вор проник в кладовку.",
-            "Соедини следы, чтобы восстановить путь вора.",
-            "Я помогу искать улики на полу."
+            "Now let’s figure out how the thief got into the storage room.",
+            "Connect the traces to reconstruct the thief’s path.",
+            "I’ll help look for clues on the floor."
         ]
         self.current_line_index = 0
         start_text_animation(self, self.intro_text[self.current_line_index])

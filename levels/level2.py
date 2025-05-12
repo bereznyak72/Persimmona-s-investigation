@@ -2,7 +2,6 @@ import pygame
 from utils import *
 import random
 
-
 class FootprintTask:
     def __init__(self, screen_width, screen_height, font, text_area_height, text_max_width):
         self.screen_width = screen_width
@@ -103,7 +102,7 @@ class FootprintTask:
         self.required_coverage = 0.8
         self.max_gap = 2
 
-        self.instruction_text = "Обведи след по порядку, начиная с красной точки!"
+        self.instruction_text = "Trace the footprint in order, starting from the red dot!"
         self.hint_font = pygame.font.Font('assets/fonts/Persimmona.ttf', int(self.screen_height * 0.035))
         self.result_text = ""
         self.current_text = ""
@@ -175,7 +174,7 @@ class FootprintTask:
         return distance <= self.max_deviation
 
     def update_covered_points(self, pos):
-        """Проверка точек по порядку"""
+        """Check points in order"""
         if self.current_point_index >= len(self.current_template):
             return
 
@@ -187,7 +186,7 @@ class FootprintTask:
 
     def check_accuracy(self):
         if len(self.player_path) < self.min_points:
-            self.result_text = "Слишком мало точек! Попробуй ещё раз."
+            self.result_text = "Too few points! Try again."
             self.player_path = []
             self.covered_points = []
             self.current_point_index = 0
@@ -199,19 +198,19 @@ class FootprintTask:
 
         if coverage_ratio >= self.required_coverage and self.current_point_index >= len(self.current_template):
             if self.stage == 1:
-                self.result_text = "Первый след зарисован! Теперь обведи второй след."
+                self.result_text = "First footprint traced! Now trace the second one."
                 self.stage = 2
                 self.current_template = self.hand_template
                 self.player_path = []
                 self.covered_points = []
                 self.current_point_index = 0
             else:
-                self.result_text = f"Отлично! Точность: {accuracy:.1f}%. Второй след зарисован!"
+                self.result_text = f"Great job! Accuracy: {accuracy:.1f}%. Second footprint traced!"
                 self.completed = True
                 self.success_animation = True
                 self.success_timer = pygame.time.get_ticks()
         else:
-            self.result_text = f"Пройдено: {accuracy:.1f}%. Пройди все точки по порядку!"
+            self.result_text = f"Completed: {accuracy:.1f}%. Trace all points in order!"
             self.player_path = []
             self.covered_points = []
             self.current_point_index = 0
@@ -290,7 +289,6 @@ class FootprintTask:
     def is_completed(self):
         return self.completed
 
-
 class Level2:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
@@ -314,38 +312,38 @@ class Level2:
         self.char_index = 0
         self.text_lines = []
         self.intro_text = [
-            "Персиммона входит в свою контору.",
-            "Там её встречает весёлый помощник, и дама в синем платье, вся на нервах.",
-            "Меня обокрали прошлой ночью!",
-            "У меня дома много ценного",
-            "Прошу, помогите мне вернуть украденное!",
-            "Я слышала, вы лучший детектив в городе.",
-            "Я даже не знаю, кто мог это сделать...",
+            "Persimmona enters her office.",
+            "There, she’s greeted by her cheerful assistant and a lady in a blue dress, all on edge.",
+            "I was robbed last night!",
+            "I have many valuable things at home.",
+            "Please, help me recover what was stolen!",
+            "I heard you’re the best detective in town.",
+            "I don’t even know who could have done this...",
         ]
         self.outro_text = [
-            "Не волнуйтесь, мы найдём вора.",
-            "Кстати, ночью ограбили Булочную и Мясную неподалёку!",
-            "Интересно… Пора проверить улики дальше.",
-            "Это может быть связано, надо выяснить.",
-            "Спасибо вам, я так надеюсь на вас!",
-            "Этот ананас — всё, что осталось от моего деда…",
-            "Я верю, что вы раскроете это дело.",
-            "Буду ждать хороших новостей!",
+            "Don’t worry, we’ll find the thief.",
+            "By the way, the Bakery and the Butcher’s nearby were robbed last night too!",
+            "Interesting… Time to check the clues further.",
+            "This might be connected, we need to find out.",
+            "Thank you, I’m counting on you!",
+            "That pineapple is all I have left from my grandfather…",
+            "I believe you’ll crack this case.",
+            "I’ll be waiting for good news!",
         ]
         self.basement_search_text = [
-            "Надо обследовать всю квартиру, каждый уголок.",
-            "Я проверю второй этаж, вдруг там что-то найду!",
-            "Я останусь тут, осмотрю окна ещё раз… Вдруг что пропустили.",
-            "Хорошо, Кукуруза, зови если что.",
-            "Эй, ребята! Тут дверь, и она заперта на магниты!",
-            "Магниты? Это необычно… Надо найти способ открыть её.",
-            "Где-то должны быть рубильники.",
-            "Я нашёл их!"
+            "We need to search the entire apartment, every corner.",
+            "I’ll check the second floor, maybe I’ll find something!",
+            "I’ll stay here, check the windows again… Maybe we missed something.",
+            "Alright, Corn, call if you find anything.",
+            "Hey, guys! There’s a door here, and it’s locked with magnets!",
+            "Magnets? That’s unusual… We need to find a way to open it.",
+            "There must be switches somewhere.",
+            "I found them!"
         ]
         self.after_electrical_text = [
-            "Мы открыли дверь! Теперь можно проверить комнату.",
-            "Постойте… Где золотой ананас? Он был здесь!",
-            "Грабитель явно побывал здесь! Он, должно быть, унёс ананас через окно.",
+            "We opened the door! Now we can check the room.",
+            "Wait… Where’s the golden pineapple? It was here!",
+            "The thief was definitely here! They must have taken the pineapple through the window.",
         ]
         self.current_line_index = 0
         start_text_animation(self, self.intro_text[self.current_line_index])
@@ -389,7 +387,7 @@ class Level2:
         max_char_width = max(CHARACTER_SIZES[char][0] * scale_factor for char in CHARACTER_SIZES)
         self.text_max_width = self.screen_width - int(max_char_width) - 60
 
-        self.blueberry_dialogue = "На полу следы грязи… Надо зарисовать их в блокнот."
+        self.blueberry_dialogue = "There are muddy footprints on the floor… I need to sketch them in the notebook."
         self.blueberry_dialogue_state = "start"
 
         self.footprint_task = FootprintTask(self.screen_width, self.screen_height, self.font, self.text_area_height,
@@ -419,7 +417,7 @@ class Level2:
         }
         self.open_button = {"rect": pygame.Rect(self.screen_width // 2 - 100, switch_y + switch_size[1] + 20, 200, 40),
                             "shaking": False, "shake_time": 0}
-        self.electrical_dialogue = "Нужно подобрать правильную комбинацию рубильников!"
+        self.electrical_dialogue = "You need to find the right combination of switches!"
         self.electrical_dialogue_state = "start"
         self.lights_off = False
         self.door_unlocked = False
@@ -435,7 +433,7 @@ class Level2:
             item["state"] = False
             item["animating"] = False
             item["anim_progress"] = 0
-        self.electrical_dialogue = "Комбинация сброшена! У тебя снова 5 попыток."
+        self.electrical_dialogue = "Combination reset! You have 5 attempts again."
         start_text_animation(self, self.electrical_dialogue)
 
     def handle_event(self, event):
@@ -583,11 +581,11 @@ class Level2:
 
     def update_blueberry_dialogue(self):
         if self.footprint_task.is_completed():
-            self.blueberry_dialogue = "Зарисовала оба следа. Надо проверить остальной дом."
+            self.blueberry_dialogue = "Both footprints are sketched. Time to check the rest of the house."
             self.blueberry_dialogue_state = "done"
             self.scene_finished = True
         else:
-            self.blueberry_dialogue = "Сначала нужно зарисовать оба следа."
+            self.blueberry_dialogue = "You need to sketch both footprints first."
             self.blueberry_dialogue_state = "wrong"
         start_text_animation(self, self.blueberry_dialogue)
 
@@ -596,7 +594,7 @@ class Level2:
         self.attempts_left -= 1
 
         if current_combination == self.correct_combination:
-            self.electrical_dialogue = "Точно! Дверь открыта, свет горит!"
+            self.electrical_dialogue = "Got it! The door is open, and the light is on!"
             self.electrical_dialogue_state = "done"
             self.door_unlocked = True
             self.lights_off = False
@@ -606,9 +604,9 @@ class Level2:
         else:
             correct_count = sum(1 for i in range(5) if current_combination[i] == self.correct_combination[i])
             if self.attempts_left > 0:
-                self.electrical_dialogue = f"Нет, это не та комбинация. Правильных: {correct_count}/5. Осталось попыток: {self.attempts_left}."
+                self.electrical_dialogue = f"No, that’s not the right combination. Correct: {correct_count}/5. Attempts left: {self.attempts_left}."
             else:
-                self.electrical_dialogue = "Попытки закончились! Генерирую новую комбинацию..."
+                self.electrical_dialogue = "Out of attempts! Generating a new combination..."
                 self.reset_combination()
             self.electrical_dialogue_state = "wrong"
             self.lights_off = True
@@ -618,7 +616,7 @@ class Level2:
             start_text_animation(self, self.electrical_dialogue)
 
     def blueberry_room_scene(self, screen):
-        if self.current_text == "На полу следы грязи… Надо зарисовать их в блокнот." and self.footprint_task.waiting_for_click:
+        if self.current_text == "There are muddy footprints on the floor… I need to sketch them in the notebook." and self.footprint_task.waiting_for_click:
             screen.blit(self.backgrounds["blueberry_footprints"], (0, 0))
         else:
             pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"],
@@ -680,7 +678,7 @@ class Level2:
                 button_rect = self.open_button["rect"]
                 pygame.draw.rect(screen, COLORS["BLUE"], button_rect)
                 pygame.draw.rect(screen, COLORS["BLACK"], button_rect, 2)
-                button_text = self.font.render("Открыть", True, COLORS["WHITE"])
+                button_text = self.font.render("Open", True, COLORS["WHITE"])
                 screen.blit(button_text, button_text.get_rect(center=button_rect.center))
 
         pygame.draw.rect(screen, COLORS["BLACK"],
@@ -689,7 +687,7 @@ class Level2:
                     self.text_max_width, COLORS["WHITE"])
 
         if not self.door_unlocked:
-            attempts_text = f"Попытки: {self.attempts_left}/5"
+            attempts_text = f"Attempts: {self.attempts_left}/5"
             attempts_surface = self.hint_font.render(attempts_text, True, COLORS["WHITE"])
             attempts_rect = attempts_surface.get_rect(topright=(self.screen_width - 20, 20))
             pygame.draw.rect(screen, COLORS["BLUEBERRY_BG"], attempts_rect.inflate(20, 10), border_radius=8)
